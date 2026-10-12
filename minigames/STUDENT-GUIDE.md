@@ -1,213 +1,73 @@
-# Week 5: make one puzzle variation with Codex
+# Play, exchange, then make it yours
 
-You will change one aspect of Get Out, watch another person play, and prepare
-one reviewable pull request. Work in your own folder and branch. Discuss ideas
-and trade playtests with classmates; your design decisions and report are yours.
+## 1. Play Get Out yourself
 
-There is **no new submission due tonight**. A draft PR records progress.
-The Motivation Atlas minigame remains due **October 18**, under its own
-repository instructions. This exercise does not replace the midterm brief.
+Open `minigames/get-out/index.html`. Use the arrows, WASD, swipe, or the direction
+buttons. Try a board before asking for a hint. What did you have to discover?
 
-## 1. Open the repository and check your tools
+## 2. Make a puzzle and play your neighbor's
 
-Use the class repository `columbia-university-ai-games/game-dev-f26`.
-If you already have it, open that checkout and run `git status` before pulling.
-Save or commit your existing work on its own branch first. Avoid resetting a
-dirty checkout to follow a class demo.
+Choose **Design a puzzle**, arrange the walls, start, and exit, then choose
+**Check & play**. Open **Exchange a board → Get current code** and send that
+code to your neighbor. Paste their code into your game and choose **Load code**.
+Keep your own code somewhere if you want to use it later.
 
-For a new checkout:
+Watch each other play without coaching. Ask: **What changed your understanding?**
+Use the game's **Designer’s guide** for ideas about goals, progress, hints,
+and discovery. Choose one thing you want to change after watching your neighbor.
 
-```sh
-git clone https://github.com/columbia-university-ai-games/game-dev-f26.git
-cd game-dev-f26
-```
+## 3. Ask Codex to make your variation
 
-Run:
+Open the class `game-dev-f26` project in Codex and paste this:
 
-```sh
-git status
-git remote -v
-python3 --version
-node --version
-codex --version
-```
+> Use the minigame-variation skill to help me make my own Get Out. Use my
+> signed-in GitHub account and set up my branch and game folder automatically.
+> After playing my neighbor's puzzle, I want to change: [your idea]. Make one
+> small change, test it, and show me how to play my version.
 
-Use Python 3.11+ and Node 22+. On Windows, use `py` in place of `python3` if
-that is your Python launcher. Python packages and cloud API keys are not
-needed for this browser exercise. The native Codex app also works: open this
-repository as the project and use its terminal for these commands.
+If you want to keep the board you designed, include its board code in the
+message. You can also ask Codex to help choose a change based on what you
+observed. There is no required “hints” exercise.
 
-Sign into Codex using the course's account instructions. Open it at the
-repository root. Read `AGENTS.md`, then verify that the repository skill
-`minigame-variation` appears in the skills list (`/skills` in the CLI).
-Invoke it as `$minigame-variation`. If it does not appear, restart Codex after
-updating the checkout. As a fallback, ask it to read
-`.agents/skills/minigame-variation/SKILL.md` explicitly.
+**Codex handles the setup.** It reads the course instructions, gets your login
+from `gh`, creates your branch and personal game copy, and runs the checks.
+You do not need to enter your username, type Git/Python commands, or install
+a separate plugin. If skill discovery fails, tell Codex to read
+`.agents/skills/minigame-variation/SKILL.md` and follow it.
 
-The skill is a small set of course instructions stored in the repo. It needs
-no separate plugin installation. The baseline workflow needs no third-party
-plugins or connectors. If the instructor demonstrates an optional plugin,
-check its requested account access before connecting it. Coding-assistant
-access and a model provider for your eventual playing agent are separate setups.
+Play the result, then give it to your neighbor. Tell Codex what actually
+happened and what you want to revise. You supply the design decisions and
+interpretation; Codex can help record your words and the checks it ran.
 
-## 2. Play, choose, predict
+## Save it for review later
 
-Open `minigames/get-out/index.html` in your browser. On your computer it works
-directly from the file. To serve locally instead:
+When you are ready, tell Codex:
 
-```sh
-python3 -m http.server 8000 --bind 127.0.0.1
-```
+> Review my variation and prepare a draft pull request to the class repository.
+> Include only my game folder. Record what we tested and leave missing human
+> observations unfinished.
 
-Open `http://localhost:8000/minigames/get-out/`. Phone testing requires an
-instructor-provided reachable URL or your approved local-network setup;
-`localhost` on a phone points to that phone.
+Codex checks the changes, commits your folder, pushes your branch to the class
+repo or your existing fork, and opens or updates one draft PR. The instructor
+reviews and merges it. Your game appears in the shared gallery after merging.
+No student edits a shared gallery index.
 
-Play one board. Choose one question from [EXERCISES.md](EXERCISES.md). Write a
-one-sentence prediction in your own words before implementation.
+**No new submission is due tonight.** The Motivation Atlas minigame remains due
+**October 18** and follows its own repository instructions. Get Out practice
+does not automatically complete that assignment.
 
-## 3. Make your own copy
+## If setup gets in the way
 
-In the commands below, replace `YOUR-LOGIN` with your lowercase GitHub login.
-The example uses `hints`; choose your own principle ID from the exercise guide.
-Start from an updated `main` with a clean working tree, then:
+The class checkout needs the lab files, Codex, a signed-in GitHub CLI (`gh`),
+Python 3.11+, and Node 22+. These are setup requirements for the instructor/TA
+to verify before the workshop. Playing the game itself needs only a browser.
+A downloaded gallery is enough to play; Codex needs the full course checkout.
 
-```sh
-git switch -c YOUR-LOGIN/get-out-hints
-python3 scripts/minigames.py new YOUR-LOGIN --principle hints
-```
+If an account or tool is unavailable, ask a TA and keep playing/exchanging
+puzzles while it is fixed. Codex should explain the specific blocker without
+asking you to repeat information it can already retrieve. It must preserve
+existing work. Keep credentials, private book pages, and player personal data
+out of the public repository.
 
-This creates:
-
-```text
-minigames/submissions/YOUR-LOGIN/get-out/
-  index.html          # your playable entry point
-  app.js, style.css   # interactions and appearance
-  engine.js           # game rules, observations, and solver
-  levels.js           # original boards you may replace
-  tests/engine.test.cjs
-  experiment.md       # prediction, evidence, and reflection
-  submission.json     # gallery metadata
-  README.md           # reference notes to adapt to your variant
-```
-
-The command refuses to overwrite an existing copy. Resume that folder and
-branch if you already started. Keep a single evolving variation for this lab;
-do not create a new folder for each revision. Only edit your own game folder.
-The reference, gallery tooling, workflow files, and other students' games belong
-to their owners. Report shared-tool issues to the instructor.
-
-## 4. Build with a bounded Codex task
-
-Start with this prompt, filled in with your own prediction:
-
-> $minigame-variation My GitHub login is YOUR-LOGIN. My principle is hints.
-> My prediction is: [your words]. Read my existing experiment.md and inspect my
-> copy. Propose one small implementation and explain the affected files and
-> checks before editing. Keep all changes inside my game folder. Implement the
-> agreed change and run the relevant tests. Leave human playtest observations
-> for me to supply.
-
-Keep the task small enough to playtest today. Ask Codex to explain one changed
-function. You should be able to trace how a player action changes game state.
-For new rules, author or revise meaningful deterministic tests. For a visual or
-wording change, check the actual browser behavior and layout.
-
-Codex may record implementation facts, commands, and actual test results. You
-write the prediction, interpretation, and AI disclosure. Keep unfinished
-observations marked TODO; never substitute generated player reactions.
-
-## 5. Test, trade games, and review
-
-```sh
-python3 scripts/minigames.py check --owner YOUR-LOGIN
-python3 scripts/minigames.py test --owner YOUR-LOGIN
-```
-
-Open **your** `index.html`, not the reference. Test keyboard controls, reset,
-undo, a win, hints, and narrow-screen controls. If rules change, check the hint
-solver, editor validation, and move trace for consistency with the new rules.
-
-Trade games with a neighbor and follow the human-playtest protocol in the
-exercise guide. Record evidence in `experiment.md`, revise once if useful, and
-update `submission.json` with a short descriptive title. Keep `schema: 1`,
-`author` matching your folder, and `entry: "index.html"`.
-
-Ask a separate Codex conversation or review task:
-
-> Review only minigames/submissions/YOUR-LOGIN/get-out/. Compare my prediction,
-> implementation, tests, and experiment report. Find concrete rule bugs,
-> regressions, misleading feedback, unsupported experience claims, and changes
-> outside my folder. Report findings with file references; do not edit or
-> invent evidence. Tell me which checks you actually ran.
-
-A code review is not a human playtest. Resolve useful findings and record the
-review in your report. Once the report is complete:
-
-```sh
-python3 scripts/minigames.py check --owner YOUR-LOGIN --ready
-python3 scripts/minigames.py gallery
-```
-
-Open `build/minigames/index.html`. Your card appears automatically. Leave
-`build/` uncommitted. Validation checks structure and unfinished placeholders;
-it cannot judge the quality or honesty of an experiment.
-
-The lab accepts self-contained games with regular files, no symlinks, up to
-2 MiB per file and 5 MiB per game. Avoid network dependencies, tracking, API
-keys, and personally identifiable playtest data. Ask about larger assets before
-adding them. The repository and its PRs are public.
-
-## 6. Make one draft PR
-
-Review and stage only your folder:
-
-```sh
-git status --short
-git add -- minigames/submissions/YOUR-LOGIN/get-out/
-git diff --cached --stat
-git diff --cached
-git commit -m "Add YOUR-LOGIN Get Out hints experiment"
-```
-
-**If you have write access to the class repo:** confirm the remote pointing to
-`columbia-university-ai-games/game-dev-f26`, then push your branch to it. In a
-fresh clone above, that remote is `origin`:
-
-```sh
-git push -u origin YOUR-LOGIN/get-out-hints
-```
-
-**If you use a fork:** push your branch to your fork remote. Open a PR from
-`YOUR-LOGIN:YOUR-LOGIN/get-out-hints` into the class repository's `main`.
-Your fork's name does not change the required folder ownership.
-
-On GitHub select **Create draft pull request**, target the **class repo's main**,
-and use the `minigame` PR template if prompted. Link the experiment report and
-any existing Asana task. Do not make a second GitHub planning backlog.
-
-If you use the GitHub CLI, you can use your report as the PR body instead:
-
-```sh
-gh pr create --repo columbia-university-ai-games/game-dev-f26 --base main --draft --title "YOUR-LOGIN: Get Out hints experiment" --body-file minigames/submissions/YOUR-LOGIN/get-out/experiment.md
-```
-
-For a fork, add `--head YOUR-LOGIN:YOUR-LOGIN/get-out-hints` to that command.
-Commit and push later revisions on the same branch; the same PR updates.
-Leave it draft while evidence is incomplete. Request review when ready.
-Instructor review controls merging. Automated checks do not award a grade.
-
-## When something goes wrong
-
-| Symptom | Next step |
-| --- | --- |
-| Skill is missing | Restart Codex in the repo; explicitly read the SKILL.md fallback above. |
-| `Already exists` | Resume your existing copy. The scaffold protects your work. |
-| Boundary check fails | Review the Files changed list. Keep only your own game folder in this PR. Ask for help before restoring files with other work in them. |
-| Cannot push to the class repo | Use your fork or keep a local commit and show it to the instructor; access trouble is not a reason to share credentials. |
-| Tests pass but play feels wrong | Observe a human player and review the design prediction. Tests cover specified behavior. |
-| Hint becomes incorrect | Check whether you changed rules without updating the solver. |
-| Other variants are missing | Update from the class repo after they are merged and regenerate the gallery. |
-| PR artifact contains unfamiliar code | Inspect the diff before opening it. The gallery executes the games locally when played. |
-
-Official reference: [Codex skills](https://learn.chatgpt.com/docs/build-skills).
+More design options: [exercise cards](EXERCISES.md). Technical details:
+[lab tools](README.md) and [reference game](get-out/README.md).

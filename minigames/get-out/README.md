@@ -43,10 +43,10 @@ after making a move and confirm the move count stays unchanged; arrow keys
 used while focusing the guide should not move the player.
 
 The designer's guide offers ten Schell-inspired questions with experiments
-and observations, plus a human-playtest checklist. The Codex guide covers
-account/project setup, repository skill discovery, creating a student copy,
-a bounded prompt, checks, review, and a draft PR. Its development commands
-require the full class repository, not just a downloaded gallery.
+and observations, plus a human-playtest checklist. The Codex guide follows
+play, exchange, and one plain-language request. The skill discovers the GitHub
+login and creates the branch and copy; Codex handles checks and the later draft
+PR. Building requires the full class repository, not just a downloaded gallery.
 
 In the course's third edition, Schell's puzzle chapter is 14, with Lens 58;
 chapter 13 covers balance. Guide text is original classroom interpretation.
