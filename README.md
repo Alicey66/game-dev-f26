@@ -20,6 +20,15 @@ The diagnostic's “Setup Verification” labels describe technical check result
 not a separate course assignment. Project tests and live evaluations remain
 required evidence for the midterm and final.
 
+## Course repository Write access
+
+[Request Write access](https://github.com/columbia-university-ai-games/game-dev-f26/issues/new?template=repository-access.yml)
+to `motivation-atlas`, `game-dev-f26`, or both.
+Submit the form from the GitHub account you want added. The request is
+assigned to the three course TAs, who verify enrollment and grant approved
+Write access. If GitHub sends an invitation, accept it to finish joining.
+Submitting the form creates a request; a TA grants access after review.
+
 ## Course choice and this example
 
 Quick navigation: [Setup](#1-prepare-this-examples-environment) ·
