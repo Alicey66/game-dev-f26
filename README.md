@@ -289,3 +289,11 @@ Provider references: [OpenAI quickstart](https://developers.openai.com/api/docs/
 [OpenAI structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs),
 [Anthropic Messages](https://platform.claude.com/docs/en/api/messages/create),
 [Anthropic structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+
+## Browser minigames
+
+[Get Out!](minigames/get-out/index.html) is a standalone puzzle workshop with
+keyboard and touch play, original levels, a board editor, and move traces.
+Open its `index.html` directly in a browser. See the
+[minigame instructions](minigames/get-out/README.md) for local serving,
+classroom use, and the rules API.

@@ -32,3 +32,15 @@ path; other platforms require instructor permission. This original demonstration
 - Never put secrets or personal playtester data in code, prompts, task text,
   recordings or reports. Model settings and artifact references belong in
   `agent-config.json`; runtime model identifiers belong in evaluation reports.
+
+## Get Out variation lab
+
+For this exercise, read `minigames/STUDENT-GUIDE.md` and use the repository skill
+`.agents/skills/minigame-variation/SKILL.md`. Student changes belong only in
+`minigames/submissions/<lowercase-github-login>/get-out/`; the reference and
+shared tooling are instructor-owned. Use the scaffold, keep one branch/PR per
+student, and stage that folder explicitly. Students write their prediction,
+interpretation, and AI disclosure. Record observed play only; unfinished human
+playtests remain TODOs in a draft. Tests of game rules and human experience
+provide different evidence. The Atlas contribution retains its own repository
+instructions and October 18 deadline.
