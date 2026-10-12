@@ -65,7 +65,7 @@
   }
   document.querySelectorAll('[data-move]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.move)));
   document.addEventListener('keydown',e=>{
-    if(editing||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,summary'))return;
+    if(editing||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,summary,.workshop-guide'))return;
     const action={ArrowUp:'up',ArrowRight:'right',ArrowDown:'down',ArrowLeft:'left',w:'up',d:'right',s:'down',a:'left'}[e.key];
     if(action){e.preventDefault();move(action);}
   });
@@ -106,5 +106,11 @@
     const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;a.download='get-out-trace.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
+  document.querySelectorAll('[data-guide]').forEach(button=>button.addEventListener('click',()=>{
+    const guide=$(button.dataset.guide);
+    guide.open=true;
+    guide.querySelector('summary').focus({preventScroll:true});
+    guide.scrollIntoView({block:'start'});
+  }));
   loadLevel(0);
 })();

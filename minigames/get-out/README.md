@@ -32,6 +32,25 @@ prevent phones from reaching a laptop server. Hosting is not configured here.
 The border and mid-slide exit conventions are explicit classroom rules.
 This version covers the basic wall puzzle, without the book's advanced pieces.
 
+## In-game workshop guides
+
+Open **Designer’s guide** or **Codex starter guide** from Workshop companions
+beside the board (below it on phones). The guides expand within the game and
+preserve the current puzzle. They are bundled with each scaffolded copy and
+work offline, including inside the generated gallery. External installation
+links need an internet connection. During a browser check, open both guides
+after making a move and confirm the move count stays unchanged; arrow keys
+used while focusing the guide should not move the player.
+
+The designer's guide offers ten Schell-inspired questions with experiments
+and observations, plus a human-playtest checklist. The Codex guide covers
+account/project setup, repository skill discovery, creating a student copy,
+a bounded prompt, checks, review, and a draft PR. Its development commands
+require the full class repository, not just a downloaded gallery.
+
+In the course's third edition, Schell's puzzle chapter is 14, with Lens 58;
+chapter 13 covers balance. Guide text is original classroom interpretation.
+
 ## Design and exchange
 
 Choose **Design a puzzle**, select a wall, clear, start, or exit tool, and
