@@ -24,7 +24,10 @@ required evidence for the midterm and final.
 
 [Request Write access](https://github.com/columbia-university-ai-games/game-dev-f26/issues/new?template=repository-access.yml)
 to `motivation-atlas`, `game-dev-f26`, or both.
-Submit the form from the GitHub account you want added. The request is
+Submit the form from the GitHub account you want added. Enter your Columbia
+UNI email and confirm that it is a verified email on that GitHub account
+(Settings > Emails). This email will be visible in the request to people
+with repository access. The request is
 assigned to the three course TAs, who verify enrollment and grant approved
 Write access. If GitHub sends an invitation, accept it to finish joining.
 Submitting the form creates a request; a TA grants access after review.

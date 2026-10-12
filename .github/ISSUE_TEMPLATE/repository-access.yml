@@ -15,8 +15,17 @@ body:
         If GitHub sends an invitation, accept it to finish joining.
         Submitting this form creates a request; a TA grants access after review.
 
-        Keep student IDs, email addresses, and other personal details out of
-        this issue. The TAs will handle any enrollment questions privately.
+        Your university email will appear in this issue and be visible to
+        people with access to this repository. Include only the requested
+        university email; keep student IDs and other personal details out.
+  - type: input
+    id: university-email
+    attributes:
+      label: University email
+      description: Enter your Columbia UNI email (UNI@columbia.edu). Add and verify it under GitHub Settings > Emails for the account submitting this request. It can remain private in your GitHub profile.
+      placeholder: abc1234@columbia.edu
+    validations:
+      required: true
   - type: dropdown
     id: repositories
     attributes:
@@ -33,6 +42,8 @@ body:
     attributes:
       label: Access request
       options:
+        - label: The university email above is a verified email on the GitHub account submitting this request.
+          required: true
         - label: I am taking AI in Practice and request Write access to the selected repositories for the GitHub account submitting this issue.
           required: true
   - type: textarea
