@@ -14,7 +14,7 @@
     state=game.create(board);initialBoard=board.slice();history=[];trace=[];hints=0;
     title=name;prompt=thought;levelIndex=index;editing=false;
     customOption.disabled=index!==null;$('levels').value=index===null?'custom':String(index);
-    renderBoard();refresh();announce('Choose a direction. The red C chases you: two pursuit steps, then a wandering step.');
+    renderBoard();refresh();announce('Choose a direction. The red triangle chases you: two pursuit steps, then a wandering step.');
   }
   function refresh() {
     $('level-number').textContent=editing?'PUZZLE WORKSHOP':levelIndex===null?'YOUR PUZZLE':`PUZZLE ${String(levelIndex+1).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
@@ -53,7 +53,7 @@
       });
       board.append(cell);
     }
-    if(!editing){const player=document.createElement('div');player.className='player';player.setAttribute('aria-hidden','true');const dot=document.createElement('span');dot.textContent='••';player.append(dot);board.append(player);if(state.chaser){const enemy=document.createElement('div');enemy.className='player chaser';enemy.textContent='C';enemy.setAttribute('aria-hidden','true');board.append(enemy);}}
+    if(!editing){const player=document.createElement('div');player.className='player';player.setAttribute('aria-hidden','true');const dot=document.createElement('span');dot.textContent='••';player.append(dot);board.append(player);if(state.chaser){const enemy=document.createElement('div');enemy.className='player chaser';const face=document.createElementNS('http://www.w3.org/2000/svg','svg');face.setAttribute('viewBox','0 0 100 100');face.innerHTML='<path d="M50 6 L95 92 H5 Z" fill="#c52e3b" stroke="#731923" stroke-width="4" stroke-linejoin="round"/><path d="M30 52 L44 58 M70 52 L56 58" fill="none" stroke="#25191b" stroke-width="5" stroke-linecap="round"/><ellipse cx="39" cy="65" rx="4" ry="5" fill="#fff"/><ellipse cx="61" cy="65" rx="4" ry="5" fill="#fff"/><path d="M38 83 Q50 71 62 83" fill="none" stroke="#25191b" stroke-width="4" stroke-linecap="round"/>';enemy.append(face);enemy.setAttribute('aria-hidden','true');board.append(enemy);}}
   }
   function move(action) {
     if(editing||state.won||state.caught)return;

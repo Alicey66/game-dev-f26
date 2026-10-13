@@ -37,3 +37,16 @@ test('chaser cannot cross walls and no eligible spawn stays absent',()=>{
  assert.deepEqual(n.chaser,[2,3]);
  const tiny=g.create(['SE','##']);assert.equal(tiny.chaser,null);assert.equal(g.step(tiny,'right').won,true);
 });
+
+test('chase maps have safe routes and Ring road punishes the unsafe first corner',()=>{
+ const levels=require('../levels.js').filter(l=>l.name.startsWith('Chase:'));
+ assert.equal(levels.length,3);
+ for(const level of levels){
+  const initial=g.create(level.board);assert.ok(initial.chaser,level.name);
+  const path=g.solve(initial);assert.ok(path && path.length>0,level.name);
+  let s=initial;for(const a of path){s=g.step(s,a);assert.equal(s.caught,false,level.name);}assert.equal(s.won,true,level.name);
+ }
+ const ring=g.create(levels.find(l=>l.name==='Chase: Ring road').board);
+ assert.equal(g.step(g.step(ring,'right'),'down').caught,true);
+ assert.equal(g.step(g.step(ring,'down'),'right').won,true);
+});

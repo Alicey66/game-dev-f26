@@ -1,6 +1,6 @@
 # Get Out: Stay ahead of the chaser
 
-Open this folder’s `index.html` in a browser. Arrows, WASD, swipe or direction buttons slide you. Red C walks one cell after every successful slide: two pursuit turns then a wandering turn. Catch at your stopping cell ends play; crossing the exit wins first. Sliding past C is safe. Undo and Reset restore C too, and hints avoid capture.
+Open this folder’s `index.html` in a browser. Arrows, WASD, swipe or direction buttons slide you. The red triangle with an angry face walks one cell after every successful slide: two pursuit turns then a wandering turn. Catch at your stopping cell ends play; crossing the exit wins first. Sliding past the chaser is safe. Undo and Reset restore the chaser too, and hints avoid capture.
 
 # Get Out! browser puzzle workshop
 
