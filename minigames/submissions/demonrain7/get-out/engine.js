@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const directions = {up: [-1, 0], right: [0, 1], down: [1, 0], left: [0, -1]};
-  function create(board, difficulty = {spawnMoves: 3, tilesPerSecond: 1}) {
+  function create(board, difficulty = {spawnMoves: 3, tilesPerSecond: 2}) {
     if (!Array.isArray(board) || board.length < 2 || board.length > 20 ||
         typeof board[0] !== 'string' || board[0].length < 2 || board[0].length > 20 ||
         board.some(row => typeof row !== 'string' || row.length !== board[0].length || /[^.#SE]/.test(row))) {

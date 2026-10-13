@@ -6,10 +6,10 @@
   {name:'A useful detour', prompt:'Make a prediction before each move.', board:['S......','.###.#.','#......','....E#.','.......','.......','..#....']}
  ];
  const curriculum = [
-  {spawnMoves:3,tilesPerSecond:1},
-  {spawnMoves:2,tilesPerSecond:1.5},
-  {spawnMoves:1,tilesPerSecond:2},
-  {spawnMoves:1,tilesPerSecond:2.5}
+  {spawnMoves:3,tilesPerSecond:2},
+  {spawnMoves:2,tilesPerSecond:3},
+  {spawnMoves:1,tilesPerSecond:4},
+  {spawnMoves:1,tilesPerSecond:5}
  ];
  for (const [i, level] of levels.entries()) level.difficulty = curriculum[i];
  if(typeof module!=='undefined'&&module.exports)module.exports=levels;else root.GetOutLevels=levels;

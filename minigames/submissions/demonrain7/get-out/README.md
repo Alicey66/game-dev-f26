@@ -27,13 +27,14 @@ No installation, model calls, or API keys are needed to play.
 
 | Board | Enemy spawns after | Enemy speed |
 | --- | --- | --- |
-| 1 | 3 successful slides | 1 tile/second |
-| 2 | 2 successful slides | 1.5 tiles/second |
-| 3 | 1 successful slide | 2 tiles/second |
-| 4 | 1 successful slide | 2.5 tiles/second |
+| 1 | 3 successful slides | 2 tiles/second |
+| 2 | 2 successful slides | 3 tiles/second |
+| 3 | 1 successful slide | 4 tiles/second |
+| 4 | 1 successful slide | 5 tiles/second |
 
-These speed values are initial tuning choices, not evidence of appropriate
-human difficulty. The student chose Combining Ideas (principle `pyramid`),
+The student requested twice the original enemy speed on every level.
+These values remain tuning choices requiring human playtesting. The student
+chose Combining Ideas (principle `pyramid`),
 combining route planning with avoiding a trace chaser. The staged head start
 and speeds also apply the Learning Sequence idea.
 
@@ -61,7 +62,7 @@ labels in written observations.
 
 ```js
 const game = require('./engine.js');
-let state = game.create(board, {spawnMoves: 2, tilesPerSecond: 1.5});
+let state = game.create(board, {spawnMoves: 2, tilesPerSecond: 3});
 state = game.step(state, 'right');
 state = game.advanceTime(state, 500); // elapsed unpaused milliseconds
 const observation = game.observe(state);

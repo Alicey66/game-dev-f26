@@ -9,7 +9,7 @@ map inside the student's permitted folder.
 | --- | --- |
 | Slides append each crossed tile chronologically. Blocked directions leave state unchanged. | code: `engine.js:36`, `engine.js:44`, `engine.js:47`; `tests/chaser.test.cjs` trace test |
 | One enemy spawns at the origin after the configured successful-move threshold, unless already escaped. Boards use 3/2/1/1 moves. | code: `engine.js:48`, `levels.js` curriculum; spawn and winning tests |
-| The enemy follows the trail one tile at a time at 1/1.5/2/2.5 tiles per second. Partial intervals accumulate. | code: `engine.js:54`, `levels.js`; corner-following and fractional-time tests |
+| The enemy follows the trail one tile at a time at 2/3/4/5 tiles per second. Partial intervals accumulate. | code: `engine.js:54`, `levels.js`; corner-following and fractional-time tests |
 | Sharing the enemy tile during a slide or enemy tick captures the player. Each elapsed tile is checked even in a long time update. | code: `engine.js:41`, `engine.js:61`; crossing and waiting-capture tests |
 | Escape or capture is terminal; no further movement or time changes state. | code: `engine.js:31`, `engine.js:45`, `engine.js:56`; terminal tests |
 | Undo restores the entire pre-slide state, including trail and partial enemy time. Reset creates a new state with original difficulty. | code: `app.js` undo/reset handlers, `engine.js:21`; browser undo/reset checks |

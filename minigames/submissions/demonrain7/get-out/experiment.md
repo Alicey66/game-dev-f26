@@ -15,8 +15,9 @@ increasing speed as levels advance.
 - `engine.js`: record every crossed tile, spawn one trace-following enemy,
   advance it by real elapsed time, detect capture, and make hints respect its
   current position. States remain immutable and observations are detached.
-- `levels.js`: 3/2/1/1 successful-slide delays and 1/1.5/2/2.5 tiles/second.
-  Speed values are assistant-proposed tuning choices to evaluate with players.
+- `levels.js`: 3/2/1/1 successful-slide delays and 2/3/4/5 tiles/second.
+  The student requested twice the original enemy speed on every level;
+  these values remain tuning choices to evaluate with players.
 - `app.js`, `index.html`, `style.css`: visible enemy and trail, chase status,
   curriculum table, pause/resume, complete undo/reset, and chase trace export.
 - Existing reference boards, editor, exchange, guides, and movement controls
@@ -30,7 +31,7 @@ increasing speed as levels advance.
   because trace, enemy, time, and curriculum behavior were absent.
 
 Checks: `python3 scripts/minigames.py check --owner demonrain7` passes.
-`python3 scripts/minigames.py test --owner demonrain7` passes 18 tests.
+`python3 scripts/minigames.py test --owner demonrain7` passes 19 tests.
 The shared deterministic suite passes 43 tests under Python 3.12.15. The
 repository's offline/headless setup check passes (no live model calls).
 
@@ -79,6 +80,7 @@ with learning. Explain what to keep/change after the test.
 The student chose real-time pursuit, trace following, curriculum spawn delays,
 and the Combining Ideas connection, and supplied the prediction above. Codex
 implemented and checked those choices, and proposed the initial speed values.
+The student subsequently requested doubling all four enemy speeds.
 TODO: Student records what they personally checked and any revised decision.
 CourseWorks does not require a separate AI-use disclosure submission.
 
@@ -90,3 +92,19 @@ a manual-resume classification issue in trace metadata, and exposure of an
 internal fractional timer in observations. Codex fixed all three. The reviewer
 rechecked the changes and reported “No findings.” Human experience evidence
 remains separate. The student and instructor retain approval decisions.
+
+## Speed revision
+
+At the student's request, enemy speeds were doubled from 1/1.5/2/2.5 to
+2/3/4/5 tiles per second. Spawn delays remain 3/2/1/1 successful slides.
+The updated curriculum assertion and new elapsed-time test failed before the
+change. The latter checks that the chaser traverses two trail tiles during
+each previous one-tile interval, including the doubled default speed.
+The game UI, README, rule map, and PR description use the new values.
+Human outcomes for the faster version remain untested.
+Browser verification of the faster version observed level 2 displaying
+3 tiles/second and capturing a stationary player along the recorded trail.
+Independent review passed all 19 tests and found no implementation issues.
+Browser recovery checks also passed for undo, reset, hints, and first-board
+completion. At a 390-pixel viewport, controls worked and the fourth level
+displayed 5 tiles/second with no horizontal overflow.

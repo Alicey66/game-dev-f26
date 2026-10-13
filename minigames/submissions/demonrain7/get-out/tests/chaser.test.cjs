@@ -107,11 +107,25 @@ test('invalid chase settings and elapsed times fail explicitly',()=>{
 test('every curriculum board has a safe immediate route under its configured spawn rule',()=>{
  const levels=require('../levels.js');
  assert.deepEqual(levels.map(l=>l.difficulty.spawnMoves),[3,2,1,1]);
- assert.deepEqual(levels.map(l=>l.difficulty.tilesPerSecond),[1,1.5,2,2.5]);
+ assert.deepEqual(levels.map(l=>l.difficulty.tilesPerSecond),[2,3,4,5]);
  for(const level of levels){
   const s=game.create(level.board,level.difficulty),path=game.solve(s);
   assert.ok(path && path.length,level.name);
   const final=play(s,path);
   assert.equal(final.won,true,level.name);assert.equal(final.caught,false,level.name);
+ }
+});
+
+test('doubled curriculum advances two trail tiles in each former one-tile interval',()=>{
+ const levels=require('../levels.js'),formerIntervals=[1000,1000/1.5,500,400];
+ assert.equal(game.create(board).difficulty.tilesPerSecond,2);
+ for(const [i,level] of levels.entries()){
+  const s=play(game.create(board,level.difficulty),['right','down','left']);
+  assert.equal(s.enemy.active,true);
+  const halfway=game.advanceTime(s,formerIntervals[i]/2);
+  assert.equal(halfway.enemy.index,1,level.name+' at half the former interval');
+  const full=game.advanceTime(s,formerIntervals[i]);
+  assert.equal(full.enemy.index,2,level.name+' at the former interval');
+  assert.equal(full.caught,false);
  }
 });
