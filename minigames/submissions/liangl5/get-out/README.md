@@ -14,7 +14,9 @@ In this variation, floor tiles become **ice** after you use them. If you slide t
 - The start tile counts as ice from the first move, so sliding back over it also makes you fall
 - This forces careful route planning—one wrong path ends the puzzle
 
-All other rules (slide until wall/border, exit on any slide, undo/reset/hints) stay the same.
+- There is no undo: every move is a commitment, so plan the route before you move
+
+All other rules (slide until wall/border, exit on any slide, reset/hints) stay the same.
 
 ## Play
 
@@ -36,7 +38,7 @@ prevent phones from reaching a laptop server. Hosting is not configured here.
 - Slide in one direction until a wall or the outside border stops you.
 - Reach the exit to win, including when you encounter it during a slide.
 - Blocked directions leave the board and move count unchanged.
-- Undo reverses a successful move; reset starts a fresh attempt and trace.
+- Reset starts a fresh attempt and trace. This variation has no undo.
 - Optional hints reveal the next move on a shortest route from your position.
   Hint requests appear in the trace and completion message.
 
@@ -129,7 +131,7 @@ keep solver answers and development tools outside that player's access.
 There is no model player or live model connection in this minigame yet.
 
 Trace downloads contain the starting board, attempted directions, outcomes,
-undo and hint events, and final position. Coordinates in JSON are zero-based;
+falls and hint events, and final position. Coordinates in JSON are zero-based;
 the visible trace uses one-based coordinates. Reset begins a new trace.
 
 ## Checks
@@ -144,7 +146,7 @@ The rules tests cover wall/border movement, blocked and invalid actions,
 exit crossing, terminal behavior, shortest paths, unreachable exits, malformed
 boards, detached observations, and the teaching boards' solvability.
 
-Browser smoke check: finish the first board (down, right, down), undo, reset,
+Browser smoke check: finish the first board (down, right, down), fall through ice, reset,
 request a hint, edit a wall, play the custom board, export and reload its
 code, reject an unsolvable code, and download a trace. Repeat movement with
 phone controls and confirm the page fits the screen.
@@ -154,4 +156,4 @@ phone controls and confirm the page fits the screen.
 - Eric Zimmerman, *The Rules We Break*, exercise 11, Get Out!, pp. 90–97.
 - Author's printable game sheets: <https://theruleswebreak.com/gamesheets.html>.
 - Course adaptation: original boards, browser interface, explicit border/exit
-  rules, hints, undo, board exchange, and trace export.
+  rules, hints, board exchange, and trace export (this variation removes undo).

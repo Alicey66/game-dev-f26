@@ -27,7 +27,8 @@ Changed files (all in `minigames/submissions/liangl5/get-out/`):
   and the solver rejecting a board that only the reference rules can solve.
 
 Rule change: re-entering any square you have already slid across ends the
-attempt. Everything else (slide to wall/border, mid-slide exit, undo, reset,
+attempt. The Undo button is removed, so every move is a commitment; reset
+still starts over. Everything else (slide to wall/border, mid-slide exit,
 hints) is unchanged.
 
 Checks: `node --test minigames/submissions/liangl5/get-out/tests/engine.test.cjs`
@@ -79,11 +80,12 @@ Issues found and resolution:
 - Checked, no change: the solver keys on position + visited set, so it stays
   correct; it solved random boards up to 20 × 20 in under 5 ms.
 
-Open design question (not changed): the Undo button still lets players take
-back safe moves, although the prediction describes a mechanic where you
-"cannot backtrack any moves". Removing or limiting undo is a possible next
-test.
+Design question raised: the Undo button still let players take back safe
+moves, although the prediction describes a mechanic where you "cannot
+backtrack any moves". Decision (student): remove Undo. Done in `index.html`,
+`app.js`, and the README.
 
-Checks repeated: engine tests 9/9 pass; `minigames.py check --owner liangl5`
-and the boundary check pass. Browser check of the fall/restart, undo, hint,
-editor, and phone layout still needs to be done by hand.
+Checks repeated: engine tests 9/9 pass; `minigames.py check --owner liangl5
+--ready` and the boundary check pass. The student checked the game in a
+browser after the restart fix (fall/restart, hints, reset, editor, narrow
+window) and found no problems. Undo was removed after that check.
