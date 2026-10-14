@@ -4,8 +4,7 @@ Principle: perception
 
 ## Prediction (student writes before building)
 
-TODO: Describe one design change, the player behavior you predict, and what
-observation would make you question that prediction.
+One design change that I am implementing is a mechanic where the user can only through through a tile once and cannot backtrack any moves. I believe this change will make it so that players have to first intensely evaluate the board without any visual aids or brute force (although still could be done) before settling on a solution. This could also be dependent on a players skill so perhaps even if I view that a player moves immediately, it is possible they are incredibly skilled and can solve the problem in one glance or they are brute forcing and not thinking too much before attempting the puzzle.
 
 ## Implementation
 
@@ -53,17 +52,38 @@ the difficulty increase.
 
 ## Interpretation and revision (student writes)
 
-TODO: Compare the evidence with the prediction. Mention prior familiarity,
-practice effects, sample size, or other limits. Describe the revision made or
-one next test. A single player's response supports a question, not a general claim.
+I think that the evidence generally backs up my investigation of whether this mechanic forces the player to think more about their moves before moving. But I did notice that most of the puzzles could be solved fairly quickly as it is difficult to ramp the difficulty up of this current set up. Perhaps a larger board or more difficult mechanics could increase the time to first move that a player must spend. 
 
 ## AI assistance and human decisions (student writes)
 
-TODO: State what Codex generated, what you checked, and one design decision you
-retained or changed. Include any remaining known issues.
+I used Claude in an iterative process to complete my variation of the minigame. I would specifically test the product (i.e. after a change play the game to see how it feels). At the beginning I had issues visually displaying that a tile was used but mechanically it worked as I envisioned (so multiple iterations were necessary here).
 
 ## Independent review
 
-TODO: Record reviewer role, issues found, tests or browser checks repeated,
-and your resolution. A fresh Codex review can check code; human play supplies
-experience evidence. The student and instructor retain approval decisions.
+Reviewer: Claude Code (AI coding assistant), reviewing the full branch diff
+against class `main` in the same session that added the manifest, report, and
+level fixes. It is a code review, not a fully independent one, and not human
+play evidence.
+
+Issues found and resolution:
+
+- Boards 3 and 4 had no ice-safe route (hints showed nothing). Fixed by adding
+  one wall each; a test now requires every teaching board to be winnable.
+- README claimed the start tile never becomes ice; the engine treats it as
+  ice. README corrected to match the engine.
+- After a fall, the 1.2 s restart timer was never cancelled. Undo, switching
+  level, importing a board, or opening the editor during that delay was
+  overwritten by the restart. Fixed: `load()` cancels the timer, undo and
+  hints are disabled while fallen, and opening the editor restarts first.
+  The trace now marks falls, and a downloaded trace reports `fell`.
+- Checked, no change: the solver keys on position + visited set, so it stays
+  correct; it solved random boards up to 20 × 20 in under 5 ms.
+
+Open design question (not changed): the Undo button still lets players take
+back safe moves, although the prediction describes a mechanic where you
+"cannot backtrack any moves". Removing or limiting undo is a possible next
+test.
+
+Checks repeated: engine tests 9/9 pass; `minigames.py check --owner liangl5`
+and the boundary check pass. Browser check of the fall/restart, undo, hint,
+editor, and phone layout still needs to be done by hand.

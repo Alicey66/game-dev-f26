@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id), game = GetOut, levels = GetOutLevels;
   const arrows = {up:'↑',right:'→',down:'↓',left:'←'};
   let levelIndex = 0, state, history = [], trace = [], hints = 0, editing = false, draft;
-  let title = '', prompt = '', initialBoard;
+  let title = '', prompt = '', initialBoard, restartTimer;
   for (const [i,level] of levels.entries()) {
     const option = document.createElement('option'); option.value = i;
     option.textContent = `${i+1}. ${level.name}`; $('levels').append(option);
@@ -11,6 +11,7 @@
   const customOption=document.createElement('option');customOption.value='custom';customOption.textContent='Your puzzle';customOption.disabled=true;$('levels').append(customOption);
   function announce(message) { $('status').textContent = message; }
   function load(board, name, thought, index) {
+    clearTimeout(restartTimer);
     state=game.create(board);initialBoard=board.slice();history=[];trace=[];hints=0;
     title=name;prompt=thought;levelIndex=index;editing=false;
     customOption.disabled=index!==null;$('levels').value=index===null?'custom':String(index);
@@ -32,8 +33,8 @@
     $('level-number').textContent=editing?'PUZZLE WORKSHOP':levelIndex===null?'YOUR PUZZLE':`PUZZLE ${String(levelIndex+1).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
     $('level-title').textContent=editing?'Design a way out':title;$('moves').textContent=state.moves;
     $('prompt').textContent=prompt;$('editor').hidden=!editing;$('edit').hidden=editing;
-    $('undo').disabled=editing||history.length===0;$('reset').disabled=editing;
-    $('hint').disabled=editing||state.won;$('next').hidden=editing||!state.won||levelIndex===null||levelIndex===levels.length-1;
+    $('undo').disabled=editing||state.died||history.length===0;$('reset').disabled=editing;
+    $('hint').disabled=editing||state.won||state.died;$('next').hidden=editing||!state.won||levelIndex===null||levelIndex===levels.length-1;
     document.querySelectorAll('[data-move]').forEach(b=>b.disabled=editing||state.won);
     $('levels').disabled=editing;
     const player=$('board').querySelector('.player');
@@ -41,7 +42,7 @@
     $('board').setAttribute('aria-label',editing?'Puzzle editor. Choose a paint tool, then select a square.':`Puzzle board, ${state.board.length} rows and ${state.board[0].length} columns. You are at row ${state.position[0]+1}, column ${state.position[1]+1}. Arrow keys move.`);
     const list=$('trace-list');list.replaceChildren();
     if(!trace.length){const li=document.createElement('li');li.textContent='No moves yet.';list.append(li);}
-    for(const event of trace){const li=document.createElement('li');li.textContent=event.type==='move'?`${arrows[event.action]} ${event.action}: (${event.from[0]+1}, ${event.from[1]+1}) → (${event.to[0]+1}, ${event.to[1]+1})${event.blocked?' · blocked':''}${event.won?' · escaped':''}`:event.type==='hint'?`Hint requested: ${event.message}`:'Undid the previous move.';list.append(li);}
+    for(const event of trace){const li=document.createElement('li');li.textContent=event.type==='move'?`${arrows[event.action]} ${event.action}: (${event.from[0]+1}, ${event.from[1]+1}) → (${event.to[0]+1}, ${event.to[1]+1})${event.blocked?' · blocked':''}${event.won?' · escaped':''}${event.died?' · fell through ice':''}`:event.type==='hint'?`Hint requested: ${event.message}`:'Undid the previous move.';list.append(li);}
   }
   function renderBoard() {
     const board=$('board'), rows=editing?draft:state.board;
@@ -72,7 +73,7 @@
     trace.push({type:'move',action,from:previous.position.slice(),to:next.position.slice(),blocked:next===previous,won:next.won,died:next.died});
     if(next!==previous){history.push(previous);state=next;}
     refresh();
-    if(state.died){announce('You hit the ice and fell! Restarting...');setTimeout(()=>load(initialBoard,title,prompt,levelIndex),1200);}
+    if(state.died){announce('You hit the ice and fell! Restarting...');restartTimer=setTimeout(()=>load(initialBoard,title,prompt,levelIndex),1200);}
     else if(state.won)announce(`You got out in ${state.moves} moves${hints?`, with ${hints} hint${hints===1?'':'s'}`:''}. What made the route click?`);
     else if(next===previous)announce(`Blocked ${action}. Try another direction; your move count stays the same.`);
     else announce(`Slid ${action}. Row ${state.position[0]+1}, column ${state.position[1]+1}. Choose your next stopping point.`);
@@ -90,7 +91,7 @@
     if(Math.max(Math.abs(dx),Math.abs(dy))>20)move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
   });
   $('board').addEventListener('pointercancel',()=>startTouch=null);
-  $('undo').addEventListener('click',()=>{if(history.length){state=history.pop();trace.push({type:'undo'});refresh();announce('Move undone. Try another route.');}});
+  $('undo').addEventListener('click',()=>{if(history.length&&!state.died){state=history.pop();trace.push({type:'undo'});refresh();announce('Move undone. Try another route.');}});
   $('reset').addEventListener('click',()=>load(initialBoard,title,prompt,levelIndex));
   $('hint').addEventListener('click',()=>{
     const path=game.solve(state);hints++;
@@ -100,7 +101,7 @@
   function loadLevel(i){const level=levels[i];load(level.board,level.name,level.prompt,i);}
   $('next').addEventListener('click',()=>loadLevel(levelIndex+1));
   $('levels').addEventListener('change',e=>{if(e.target.value!=='custom')loadLevel(Number(e.target.value));});
-  $('edit').addEventListener('click',()=>{editing=true;draft=initialBoard.map(row=>row.split(''));renderBoard();refresh();announce('Choose a tool and tap a square. Your current game is kept until you play the new board.');});
+  $('edit').addEventListener('click',()=>{if(state.died)load(initialBoard,title,prompt,levelIndex);editing=true;draft=initialBoard.map(row=>row.split(''));renderBoard();refresh();announce('Choose a tool and tap a square. Your current game is kept until you play the new board.');});
   $('cancel-edit').addEventListener('click',()=>{editing=false;renderBoard();refresh();announce('Back to your puzzle.');});
   $('blank').addEventListener('click',()=>{draft=Array.from({length:7},()=>Array(7).fill('.'));draft[0][0]='S';draft[6][6]='E';renderBoard();refresh();announce('A fresh 7 × 7 board. Add walls to make a route.');});
   function loadCustom(rows){
@@ -116,7 +117,7 @@
   });
   $('import').addEventListener('click',()=>{try{loadCustom($('board-code').value.trim().split(/\r?\n/).map(row=>row.trim()));}catch(e){announce(e.message);}});
   $('download').addEventListener('click',()=>{
-    const payload={format:'get-out-trace-v1',board:initialBoard,events:trace,moves:state.moves,hints,outcome:state.won?'escaped':'in_progress',position:state.position};
+    const payload={format:'get-out-trace-v1',board:initialBoard,events:trace,moves:state.moves,hints,outcome:state.won?'escaped':state.died?'fell':'in_progress',position:state.position};
     const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
     const a=document.createElement('a');a.href=url;a.download='get-out-trace.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
