@@ -36,9 +36,20 @@ Checks: `node --test minigames/submissions/liangl5/get-out/tests/engine.test.cjs
 
 ## Playtest observations
 
-TODO: Record anonymous player labels, board, version and order played, hints
-requested, restarts, completion, and one revealing action or remark. Separate
-observations from interpretations. No names, emails, or other personal data.
+Player A played the thin-ice variation's teaching boards.
+
+Observed:
+
+- Time to first move rose sharply. Before touching a key, Player A stopped to
+  map out the whole route as efficiently as possible.
+- On some levels Player A showed frustration at first, and described solving
+  them as very rewarding.
+
+Not recorded: exact boards and order, hint requests, number of falls/restarts,
+and timings. Player A's familiarity with the reference game was not noted.
+
+Interpretation (designer's, not observed): the reward after solving came from
+the difficulty increase.
 
 ## Interpretation and revision (student writes)
 
