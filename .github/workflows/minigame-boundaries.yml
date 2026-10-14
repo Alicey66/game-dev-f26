@@ -23,6 +23,8 @@ jobs:
           path: submitted
           fetch-depth: 0
           persist-credentials: false
+          # Fork code is read as data; only code from trusted/ runs below.
+          allow-unsafe-pr-checkout: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
