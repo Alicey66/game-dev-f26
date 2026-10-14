@@ -65,13 +65,13 @@ test('portal endpoints remain one-way and observations are detached',()=>{
  assert.equal(state.portals[0].entry[0],2);
 });
 test('entering an IN wall lands on OUT and ends the slide',()=>{
- const state=game.create(['S....','.....','..#..','.....','....E'],[{entry:[0,2],exit:[2,2]}]);
+ const state=game.create(['S.#..','.....','..#..','.....','....E'],[{entry:[0,2],exit:[2,2]}]);
  const teleported=game.step(state,'right');
  assert.deepEqual(teleported.position,[2,2]);
  assert.equal(teleported.moves,1);
 });
 test('an OUT wall blocks entry from every direction but allows leaving it',()=>{
- const state=game.create(['S....','.....','..#..','.....','....E'],[{entry:[0,2],exit:[2,2]}]);
+ const state=game.create(['S.#..','.....','..#..','.....','....E'],[{entry:[0,2],exit:[2,2]}]);
  for(const [position,action] of [[[1,2],'down'],[[3,2],'up'],[[2,1],'right'],[[2,3],'left']]) {
   const approach={...state,position};
   assert.equal(game.step(approach,action),approach);
