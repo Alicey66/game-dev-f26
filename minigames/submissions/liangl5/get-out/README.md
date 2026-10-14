@@ -11,7 +11,7 @@ In this variation, floor tiles become **ice** after you use them. If you slide t
 
 - Slide across a tile → it turns into ice (light blue with frosty pattern)
 - Try to slide through ice again → fall and restart
-- Start tile never becomes ice
+- The start tile counts as ice from the first move, so sliding back over it also makes you fall
 - This forces careful route planning—one wrong path ends the puzzle
 
 All other rules (slide until wall/border, exit on any slide, undo/reset/hints) stay the same.
