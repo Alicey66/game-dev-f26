@@ -41,15 +41,10 @@ These checks do not establish the prediction about human behavior.
 - Not yet observed: no outside player has tried it. Self-test is biased (I know what the change is for), so this is weak evidence.
 
 **Next decision**
-- My interpretation: I ignored the dots because [your reason].
-- Next change: [e.g. mark which directions were already tried from each dot / make dots more visible / keep as-is and test on someone else first].
+- My interpretation: I ignored the dots because they only showed where I’d stopped, not which directions I’d already tried, so they didn’t help me pick a move.
+- Next change: mark which directions have been tried from each dot, then test with an outside player.
 - If an outside player *does* use the dots, keep the change and test on harder boards; if they also ignore them or feel false progress, the next step above stands.
 - Checks: reference rule tests (`node --test`) run by Codex; changes limited to `minigames/submissions/alsjoee/get-out/`.
-
-## AI assistance and human decisions (student writes)
-
-TODO: State what Codex generated, what you checked, and one design decision you
-retained or changed. Include any remaining known issues.
 
 ## Independent review
 
