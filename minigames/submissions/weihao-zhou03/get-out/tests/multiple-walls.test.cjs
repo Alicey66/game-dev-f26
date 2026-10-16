@@ -82,7 +82,7 @@ test('oversized phase combinations are refused before an expensive hint search',
 });
 
 test('the new obstacle-rich boards have two movement axes and verified acceptance routes',()=>{
-  const levels=require('../levels.js');
+  const levels=require('../levels.js').filter(level=>!level.monster);
   const routes=[
     ['right','down','left','up','right','up','right','down','left','up'],
     ['wait','down','right','down','right','wait','up','left','up'],
@@ -117,7 +117,7 @@ test('the final acceptance route deliberately borrows a brake from all three wal
 });
 
 test('all reachable phases keep actors separate and Wait previews agree with movement',()=>{
-  for(const level of require('../levels.js')){
+  for(const level of require('../levels.js').filter(level=>!level.monster)){
     const initial=game.create(level.board,level),queue=[initial],seen=new Set();
     const key=s=>s.position.join(',')+'|'+s.movers.map(m=>m.index+','+m.direction).join(';');
     seen.add(key(initial));

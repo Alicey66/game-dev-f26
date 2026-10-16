@@ -1,48 +1,51 @@
-# Moving Walls: rule and source map
+# The Pursuit: rule and source map
 
-Scope: this student's browser minigame only. The shared Garden Door map and
-reference minigame are outside the variation's scope.
+Scope: this student's browser minigame. Shared Python rules, tools and the
+reference game are not modified. The student chose moving blocks, one step
+per player action, multiple directions/obstacles, then one pursuing monster.
+Detailed pursuit/hold/preview choices are local design proposals, not facts
+from Schell or human play evidence.
 
-The student chose moving blocks, one wall step per player action, then more
-obstacles and multiple directions. Detailed hold/rail/input limits are local
-implementation choices, not claims about the book or human play evidence.
-Every `code` label below is backed by implementation and acceptance tests;
-none establishes human enjoyment or comprehension.
+`code` below labels implemented mechanical behavior established by tests.
+It does not establish fairness, difficulty, comprehension or enjoyment.
 
 | Rule | Implemented evidence |
 | --- | --- |
-| Slide until a fixed wall, a wall's current position, or the border; crossing the exit wins immediately. | `code`: `engine.js:67` (`step`); static compatibility and multi-wall brake tests. |
-| After a successful non-winning slide or Wait, all moving walls advance one cell simultaneously using their own phase and the player's final cell. | `code`: `engine.js:67`; opposite-direction movement and independent-hold tests in `tests/multiple-walls.test.cjs`. |
-| Each wall bounces at its endpoints. It pauses if its next target contains the player; other walls continue. No wall pushes or crushes the player. | `code`: `engine.js:57` (`advanceWall`); endpoint, occupied-target and independent-hold tests. |
-| A board has at most three separate straight contiguous rails, 2-20 cells each. Rail cells are floor/start terrain, cannot cross or overlap, and initial walls cannot cover the player. Walls never collide with each other because their rails are disjoint. | `code`: `engine.js:6` (`create`); malformed rails, crossing rails, maximum count and reachable-phase separation tests. |
-| Wait keeps the player still and spends a turn. Blocked directions spend nothing and move no walls. Static boards do not offer Wait. | `code`: `engine.js:67` and `engine.js:87` (`legalActions`); refused action and static compatibility tests. |
-| Undo/reset restore every wall's position and direction with the player. Winning freezes all actors. | `code`: `app.js:133` and `app.js:134`; `engine.js:67`; terminal-freeze test and browser lifecycle checks in `experiment.md`. |
-| Observations detach all visible rail/phase/target data. Solving includes Wait and keys every wall's position/direction as well as the player. | `code`: `engine.js:93` (`observe`) and `engine.js:106` (`solve`); detached observation, different-phase and three-board route tests. No model player is added. |
-| The exact search admission bound is rows * columns * product(2 * rail.length) <= 120000. Unsupported combinations are rejected before solving, not called unsolvable. | `code`: `engine.js:53`; oversized-phase validation test. |
-| A/B/C and colors identify walls; arrows and dashed letters show next targets. A target is entered only if the player's final cell does not occupy it. Winning walls show completion checkmarks. | `code`: `app.js:64` (`updateActors`) and `app.js:72` (`renderBoard`); occupied-target observation test and browser preview/completion checks. |
-| Board exchange preserves all initial phases; trace v2 records all walls before/after moves and restored phases on Undo. | `code`: `puzzle-code.js:5`, `puzzle-code.js:8`, `app.js:109` and `app.js:159`; multi-wall roundtrip and browser trace checks. |
+| Slide until a fixed/moving wall or border. Live exit wins mid-slide. Contact with the hunter during a slide kills immediately before later phases. | `code`: `engine.js:96` step; static rules and pursuit slide-contact/live-exit tests. |
+| One accepted slide/Wait advances every gate, then one hunter step. A blocked or invalid input changes nothing; Wait exists with gates or a hunter, but not on entirely static boards. | `code`: `engine.js:96`, `engine.js:121`; refused input, static compatibility and gate-before-pursuit tests. |
+| Each gate bounces at rail ends and pauses if its target contains either actor. Other gates continue; gates cannot crush either actor. | `code`: `engine.js:68` advanceWall; both-actor holds, independent gates, reachable-state separation tests. |
+| One hunter walks one cell along a shortest open path to the player's final position. Fixed/moving walls block it; ties are Up, Right, Down, Left; no path means staying. | `code`: `engine.js:79` chase; shortest-step/tie and closing-passage tests. |
+| Pursuit reaching the player loses. Won/lost states freeze and have no legal actions. Undo/reset restore both actors and all gate phases. | `code`: `engine.js:96`, `app.js:188`, `app.js:189`; capture/terminal tests and browser loss lifecycle checks. |
+| Observations detach all actor/gate data. H preview is the exact result IF YOU WAIT, after gate movement; it warns when that Wait kills. Movement can change the pursuit route. | `code`: `engine.js:127`, `app.js:41`, `app.js:94`; detached observation, Wait agreement, lethal-Wait tests and browser warning checks. |
+| Exact safe solving keys player cell, each gate index/direction, and hunter cell; captured states are excluded. Initial OPTIMAL is fixed during an attempt and includes Wait. | `code`: `engine.js:140`, `engine.js:143`, `app.js:34`, `app.js:159`; safe-detour, distinct hunter-phase, acceptance and browser target tests. |
+| Rails are disjoint, straight and contiguous, 2-20 cells, at most three. Initial actors cannot overlap; the monster starts on floor away from S/E and current gates. | `code`: `engine.js:6`; invalid rails, spawns, overlap and reachable-separation tests. |
+| Search admission: with a hunter, floorCells^2 * product(2 * railLength) <= 1,000,000; without one, rows * columns * product(2 * railLength) <= 120,000. Reject larger inputs before searching. | `code`: `engine.js:64`; large-phase refusal tests. |
+| Exchange preserves the initial monster and all rail phases; old wall-only/plain codes still load. Pursuit trace includes initial/final hunter, capture cause, every gate and Undo restoration. | `code`: `puzzle-code.js:5`, `puzzle-code.js:9`, `app.js:214`; exchange tests and actual browser trace download. |
+| Hunter painting moves one spawn; Clear on it removes it; Cancel preserves the active attempt. Custom load verifies safe solvability before replacing the current game. | `code`: `app.js:109`, `app.js:201`; browser editor, cancel, custom reset and invalid-import checks. |
 
-Tests: `tests/engine.test.cjs`, `tests/moving-walls.test.cjs`, and
-`tests/multiple-walls.test.cjs`. Nine original new rule tests failed before the
-single-wall engine change. Seven additional multi-wall tests failed before
-revision 2 support was implemented. Current total: 31 passing tests, including a dynamic dead-end regression prompted by the author's self-play feedback.
+The earlier map had no pursuit rule. Proposed rows were added before the
+engine change and labeled assumed design choices. Ten tests in
+`tests/pursuit.test.cjs` then failed because the hunter was absent (undefined
+actor/loss/preview data, no capture, no validation). Those tests pass after
+implementation. The new `code` evidence is mechanical. The author subsequently
+reported greater perceived difficulty, more careful planning and less room
+for error in the hunter version; see `experiment.md`. Whether the extra
+pressure is satisfying and how another player responds remain open questions.
 
-The three boards have 8/15/16 fixed obstacles and 2/3/3 moving walls. Their
-acceptance routes take 10/9/12 turns, respectively; the final route uses every
-moving wall as a brake. All three have no route if the moving walls are removed.
-These are mechanical facts checked in tests, not human difficulty assessments.
+Current tests: 43 across `tests/engine.test.cjs`,
+`tests/moving-walls.test.cjs`, `tests/multiple-walls.test.cjs`, and
+`tests/pursuit.test.cjs`. The latter also tests three safe acceptance routes
+and reachable small-puzzle invariants. Earlier single/multi-wall regressions
+remain, including a concrete wall-only forward dead end.
 
-## Optimal-turn challenge
+Three hunts reuse the earlier layouts: 2/3/3 moving gates, 8/15/16 fixed walls,
+shortest safe escapes 11/9/16. Every acceptance route includes a hunter-held
+gate; the final route uses all three moving gates as brakes. Their Practice
+counterparts retain 10/9/12. No layout has a route if all moving gates are
+removed. These are tested mechanical facts, not human difficulty rankings.
 
-`code`: `app.js:29` computes the exact initial route length using the existing
-phase-aware solver. `app.js:113` compares a finished attempt with that fixed
-target. Wait costs one turn and blocked directions cost none, as the engine
-already specifies. Undo keeps the target, reset recomputes the same initial
-target, and custom imports get their own target. The original 10/9/12 route
-length tests and final browser lifecycle checks establish the displayed value;
-the motivational benefit remains a design prediction.
-
-Some final-maze positions have no forward solution, even after Wait.
-`tests/multiple-walls.test.cjs` supplies a concrete reachable sequence; the
-solver returns null there and the hint recommends Undo/reset. This is a known
-level-design limitation, not a claim that every position is solvable.
+The playing-agent boundary remains the pure exported create/step/observe/
+legalActions/solve API. No model, credentials, file access or hidden world
+object is added to the player. Observation contains only the fully visible
+board, phases, actor cells and conditional targets shown in the UI. Losing
+moves are legal risks; blocked/invalid moves advance no phase.

@@ -49,25 +49,54 @@
       if (railCells.has(key)) throw new Error('Moving wall rails cannot cross or overlap.');
       railCells.add(key);
     }
-    // Bound the complete search space, including phases created by player holds.
-    const searchSize = board.length * board[0].length * movers.reduce((n,m) => n * 2 * m.path.length, 1);
-    if (searchSize > 120000) throw new Error('Shorten a rail or use a smaller board for instant route checks and hints.');
-    return {board: board.slice(), position, movers, moves: 0, won: false};
+    let monster=options.monster===undefined?null:options.monster;
+    if(monster!==null){
+      if(!Array.isArray(monster)||monster.length!==2||!monster.every(Number.isInteger)||
+        monster[0]<0||monster[0]>=board.length||monster[1]<0||monster[1]>=board[0].length||
+        board[monster[0]][monster[1]]!=='.'||movers.some(m=>same(m.path[m.index],monster))){
+        throw new Error('Place one monster on empty floor, away from the start, exit and moving walls.');
+      }
+      monster=monster.slice();
+    }
+    // Include both actor cells and every independent wall phase in admission.
+    const phases=movers.reduce((n,m)=>n*2*m.path.length,1);
+    const floor=all.replace(/#/g,'').length;
+    const searchSize=monster?floor*floor*phases:board.length*board[0].length*phases;
+    if(searchSize>(monster?1000000:120000))throw new Error('Shorten a rail or use a smaller board for route checks and hints.');
+    return {board: board.slice(), position, movers, monster, moves: 0, won: false, lost:false, deathCause:null};
   }
-  function advanceWall(mover, position) {
+  function advanceWall(mover, position, monster=null) {
     let direction = mover.direction, index = mover.index + direction;
     if (index < 0 || index >= mover.path.length) {
       direction = -direction;
       index = mover.index + direction;
     }
-    const held = same(mover.path[index], position);
-    return {mover: {...mover, index: held ? mover.index : index, direction}, held,
+    const heldBy=same(mover.path[index],position)?'player':monster&&same(mover.path[index],monster)?'monster':null;
+    const held=heldBy!==null;
+    return {mover: {...mover, index: held ? mover.index : index, direction}, held, heldBy,
       targetPosition: mover.path[index]};
+  }
+  function chase(state,movers){
+    if(!state.monster)return null;
+    const blocked=new Set(movers.map(m=>m.path[m.index].join(',')));
+    const queue=[{cell:state.monster,first:null}],seen=new Set([state.monster.join(',')]);
+    for(let cursor=0;cursor<queue.length;cursor++){
+      const {cell,first}=queue[cursor];
+      for(const [dr,dc] of Object.values(directions)){
+        const next=[cell[0]+dr,cell[1]+dc],key=next.join(',');
+        if(next[0]<0||next[0]>=state.board.length||next[1]<0||next[1]>=state.board[0].length||
+          state.board[next[0]][next[1]]==='#'||blocked.has(key)||seen.has(key))continue;
+        const step=first||next;
+        if(same(next,state.position))return step.slice();
+        seen.add(key);queue.push({cell:next,first:step});
+      }
+    }
+    return state.monster.slice();
   }
   function step(state, action) {
     if (action !== 'wait' && !Object.hasOwn(directions, action)) throw new Error('Unknown direction or action.');
-    if (state.won) return state;
-    if (action === 'wait' && !state.movers.length) return state;
+    if (state.won||state.lost) return state;
+    if (action === 'wait' && !state.movers.length&&!state.monster) return state;
     let [r, c] = state.position;
     if (action !== 'wait') {
       const [dr, dc] = directions[action];
@@ -76,34 +105,43 @@
         if (nr < 0 || nr >= state.board.length || nc < 0 || nc >= state.board[0].length ||
             state.board[nr][nc] === '#' || state.movers.some(m => same(m.path[m.index], [nr,nc]))) break;
         r = nr; c = nc;
+        if(state.monster&&same([r,c],state.monster)){
+          return {...state,position:[r,c],moves:state.moves+1,lost:true,deathCause:'slide'};
+        }
         if (state.board[r][c] === 'E') break;
       }
       if (r === state.position[0] && c === state.position[1]) return state;
     }
     const position = [r,c], won = state.board[r][c] === 'E';
-    const movers = won ? state.movers : state.movers.map(m => advanceWall(m, position).mover);
-    return {...state, position, movers, moves: state.moves + 1, won};
+    const movers = won ? state.movers : state.movers.map(m => advanceWall(m, position,state.monster).mover);
+    const monster=won?state.monster:chase({...state,position},movers);
+    const lost=Boolean(monster&&!won&&same(monster,position));
+    return {...state, position, movers, monster, moves: state.moves + 1, won,lost,deathCause:lost?'pursuit':null};
   }
   function legalActions(state) {
-    if (state.won) return [];
+    if (state.won||state.lost) return [];
     const actions = Object.keys(directions).filter(action => step(state, action) !== state);
-    if (state.movers.length) actions.push('wait');
+    if (state.movers.length||state.monster) actions.push('wait');
     return actions;
   }
   function observe(state) {
+    const terminal=state.won||state.lost;
+    const waited=state.monster&&!terminal?step(state,'wait'):state;
     return {board: state.board.slice(), position: state.position.slice(), moves: state.moves,
       movers: state.movers.map(m => {
-        const next = state.won ? {mover: m, held: false, targetPosition: m.path[m.index]} : advanceWall(m, state.position);
+        const next = terminal ? {mover: m, held: false, heldBy:null,targetPosition: m.path[m.index]} : advanceWall(m, state.position,state.monster);
         return {path: m.path.map(cell => cell.slice()), index: m.index, direction: m.direction,
           nextPosition: next.mover.path[next.mover.index].slice(),
-          targetPosition: next.targetPosition.slice(), held: next.held};
+          targetPosition: next.targetPosition.slice(), held: next.held,heldBy:next.heldBy};
       }),
-      won: state.won, legalActions: legalActions(state)};
+      monster:state.monster?{position:state.monster.slice(),waitPosition:waited.monster.slice(),waitLethal:!terminal&&waited.lost}:null,
+      won: state.won,lost:state.lost,deathCause:state.deathCause,legalActions: legalActions(state)};
   }
   function stateKey(state) {
-    return `${state.position.join(',')}|${state.movers.map(m => `${m.index},${m.direction}`).join(';')}`;
+    return `${state.position.join(',')}|${state.movers.map(m => `${m.index},${m.direction}`).join(';')}|${state.monster?.join(',')||'-'}`;
   }
   function solve(state) {
+    if(state.lost)return null;
     const first = stateKey(state), queue = [state], seen = new Map([[first, null]]);
     for (let i = 0; i < queue.length; i++) {
       const current = queue[i], currentKey = stateKey(current);
@@ -119,7 +157,9 @@
       // Prefer an equally short Wait to an unnecessary out-and-back detour.
       if (actions.includes('wait')) actions.unshift(actions.pop());
       for (const action of actions) {
-        const next = step(current, action), key = stateKey(next);
+        const next = step(current, action);
+        if(next.lost)continue;
+        const key = stateKey(next);
         if (!seen.has(key)) {
           seen.set(key, {previous: currentKey, action}); queue.push(next);
         }

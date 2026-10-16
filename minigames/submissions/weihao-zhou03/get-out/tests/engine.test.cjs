@@ -34,7 +34,7 @@ test('observations are detached and legal actions follow actual movement',()=>{
 test('every teaching board is solvable and its solution reaches the exit',()=>{
  const levels=require('../levels.js');
  for(const level of levels){
-  const initial=game.create(level.board,{movers:level.movers||[]}),solution=game.solve(initial);
+  const initial=game.create(level.board,level),solution=game.solve(initial);
   assert.ok(solution && solution.length>0,level.name);
   const final=solution.reduce((s,a)=>game.step(s,a),initial);
   assert.equal(final.won,true,level.name);
