@@ -2,11 +2,17 @@
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 
+from .diagnose import check_settings, diagnose, render
 from .narrator import LIVE_PROVIDERS, narrate
 from .world import World
+
+
+class SettingsBlocked(Exception):
+    """A settings problem was found before the live call, so none was made."""
 
 
 def command_ok(label: str, command: list[str], timeout: int = 30) -> bool:
@@ -39,7 +45,12 @@ def main() -> int:
     checks.append(command_ok("Pyxel engine", engine))
     checks.append(command_ok("deterministic tests", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]))
     provider = "fixture" if args.offline else args.provider
+    findings = [] if args.offline else check_settings(provider, os.environ)
+    for finding in findings:
+        print(render("settings", finding))
     try:
+        if any(finding.level == "FAIL" for finding in findings):
+            raise SettingsBlocked
         result = narrate(World().observe(), "look", provider)
         print(f"PASS {'scripted fixture (no live call)' if args.offline else 'live model response'}")
         # Metadata only: no prompts, player text, credentials or identifying data.
@@ -51,8 +62,12 @@ def main() -> int:
             "cost": "not estimated; use the dated price for your approved model",
         }))
         checks.append(True)
+    except SettingsBlocked:
+        print("FAIL live model response: no live call was made; fix the settings above first.")
+        checks.append(False)
     except Exception as error:
-        print(f"FAIL live model response: {type(error).__name__}. Check the README access steps.")
+        # Findings name the project, location or model involved, never a key.
+        print(render("live model response", diagnose(error, provider, os.environ)))
         checks.append(False)
     if not all(checks):
         print("SETUP INCOMPLETE. No failed check was replaced with an offline pass.")

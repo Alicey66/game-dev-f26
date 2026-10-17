@@ -1,5 +1,7 @@
 import argparse
+import os
 
+from .diagnose import diagnose
 from .narrator import LIVE_PROVIDERS, narrate
 from .world import World
 
@@ -34,8 +36,10 @@ def main() -> None:
                 print(f"[{result.provider}; {result.model}; {result.elapsed_seconds:.2f}s; "
                       f"total tokens: {result.total_tokens}; facts: {result.fact_ids}]")
             except Exception as error:
-                # Provider errors can contain request details. Keep output free of credentials.
-                print(f"Narration unavailable ({type(error).__name__}); showing game state.")
+                # Findings name the project, location or model involved, never a key.
+                print(f"Narration unavailable: {diagnose(error, args.provider, os.environ).problem}")
+                print("For the fix, run: uv run --frozen python -m course_game.setup_check "
+                      f"--provider {args.provider} --headless")
                 print(world.act("look"))
         else:
             print(world.act(command))
