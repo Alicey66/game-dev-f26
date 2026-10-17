@@ -255,6 +255,25 @@ class Other(unittest.TestCase):
         self.assertIn("instructor and TAs", out)
         self.assertNotIn("abcdefghijkl", out)
 
+    def test_unknown_error_hides_google_tokens_and_auth_headers(self):
+        message = ("token ya29.a0AfB_byC-secret refresh 1//0gSecretRefresh-token "
+                   "Authorization: Bearer opaque.secret.value and \"private_key\": \"-----BEGIN\"")
+        out = text(diagnose(RuntimeError(message), "vertex", VERTEX))
+        for secret in ("a0AfB_byC-secret", "0gSecretRefresh", "opaque.secret.value", "BEGIN"):
+            self.assertNotIn(secret, out)
+
+    def test_unknown_error_hides_the_exact_value_of_any_key_in_the_environment(self):
+        env = {"OPENAI_API_KEY": "custom-format-key-123", "SOME_SERVICE_TOKEN": "tok-456789",
+               "COURSE_MODEL": "gpt-5-mini"}
+        out = text(diagnose(RuntimeError("failed with custom-format-key-123 and tok-456789"), "openai", env))
+        self.assertNotIn("custom-format-key-123", out)
+        self.assertNotIn("tok-456789", out)
+
+    def test_provider_refusal_message_is_scrubbed_too(self):
+        error = ClientError(400, {"error": {"code": 400, "status": "INVALID_ARGUMENT",
+                                            "message": "bad request near Bearer abc.def.ghi"}})
+        self.assertNotIn("abc.def.ghi", text(diagnose(error, "vertex", VERTEX)))
+
 
 class SetupCheck(unittest.TestCase):
     def run_setup(self, env, narrate_effect=None):

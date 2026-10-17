@@ -45,7 +45,16 @@ CALL_FAMILY = {"vertex": "and the course Google credit.", "anthropic": "and an A
 PLACEHOLDER = re.compile(r"your[_-]|replace[_-]with|placeholder|[<>\[\]]", re.I)
 PROJECT_ID = re.compile(r"[a-z][a-z0-9-]{4,28}[a-z0-9]")
 LOCATION = re.compile(r"global|us|eu|[a-z]+-[a-z]+\d+")
-SECRETS = re.compile(r"sk-[A-Za-z0-9_*-]{4,}|AIza[0-9A-Za-z_-]{10,}")
+SECRETS = re.compile(
+    r"sk-[A-Za-z0-9_*-]{4,}"  # OpenAI and Anthropic keys
+    r"|AIza[0-9A-Za-z_-]{10,}"  # Google API keys
+    r"|ya29\.[\w.-]+"  # Google access tokens
+    r"|1//[\w.-]+"  # Google refresh tokens
+    r"|Bearer\s+\S+"  # authorization headers
+    r"|\"?private_key\"?\s*[:=].*",  # service-account key material, to the end of the line
+    re.I,
+)
+SECRET_NAMES = re.compile(r"KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL", re.I)
 SCREENSHOT = ("Message your instructor and TAs with a screenshot of this output.",)
 
 
@@ -140,7 +149,7 @@ def diagnose(error: BaseException, provider: str, env) -> Finding:
         finding = read(error, provider, env)
         if finding:
             return finding
-    return Finding("FAIL", f"{type(error).__name__}: {_scrub(str(error))[:300]}", SCREENSHOT)
+    return Finding("FAIL", f"{type(error).__name__}: {_scrub(str(error), env)[:300]}", SCREENSHOT)
 
 
 def _google(error, provider, env):
@@ -203,7 +212,7 @@ def _google(error, provider, env):
     if error.code >= 500:
         return Finding("FAIL", f"Google's service had a temporary problem ({error.code}).", (
             "Wait a few minutes, then run this check again.",))
-    return Finding("FAIL", f"Google refused the request ({error.code}): {_scrub(error.message or '')[:300]}",
+    return Finding("FAIL", f"Google refused the request ({error.code}): {_scrub(error.message or '', env)[:300]}",
                    SCREENSHOT)
 
 
@@ -230,7 +239,7 @@ def _openai(error, provider, env):
         return Finding("FAIL", f"OpenAI's service had a temporary problem ({error.status_code}).", (
             "Wait a few minutes, then run this check again.",))
     if isinstance(error, openai.APIStatusError):
-        return Finding("FAIL", f"OpenAI refused the request ({error.status_code}): {_scrub(error.message)[:300]}",
+        return Finding("FAIL", f"OpenAI refused the request ({error.status_code}): {_scrub(error.message, env)[:300]}",
                        SCREENSHOT)
     if isinstance(error, openai.APIConnectionError):
         return _unreachable("OpenAI")
@@ -258,7 +267,7 @@ def _anthropic(error, provider, env):
         if error.status_code == 429 or error.status_code >= 500:
             return Finding("FAIL", f"Anthropic is busy or limiting requests for the moment ({error.status_code}).", (
                 "Wait a minute, then run this check again.",))
-        return Finding("FAIL", f"Anthropic refused the request ({error.status_code}): {_scrub(error.message)[:300]}",
+        return Finding("FAIL", f"Anthropic refused the request ({error.status_code}): {_scrub(error.message, env)[:300]}",
                        SCREENSHOT)
     if isinstance(error, anthropic.APIConnectionError):
         return _unreachable("Anthropic")
@@ -292,5 +301,9 @@ def _narration(error, provider, env):
         f"If it keeps failing, compare {stronger} on the same question."))
 
 
-def _scrub(text: str) -> str:
+def _scrub(text: str, env) -> str:
+    """Hide key-shaped text and the exact value of every key-like setting before printing."""
+    for name, value in env.items():
+        if SECRET_NAMES.search(name) and len(value) >= 6:
+            text = text.replace(value, "[key hidden]")
     return SECRETS.sub("[key hidden]", text)
