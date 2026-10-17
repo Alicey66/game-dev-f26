@@ -150,9 +150,13 @@ All live providers require `COURSE_MODEL`, set to your chosen API model ID:
 | `openai` | `OPENAI_API_KEY` | Actions secret `OPENAI_API_KEY` |
 
 For Vertex AI, use your own course Google Cloud project, linked to your
-eligible course-credit billing account. In Week 2, the instructor supplies
-credit redemption and project-setup instructions, supported locations and
-verified funded model options. Do not use another student's project. Install the
+eligible course-credit billing account. The
+[Google Cloud credits page](https://courseworks2.columbia.edu/courses/258228/pages/google-cloud-credits)
+on CourseWorks covers redeeming your code, creating the project, turning on
+the Vertex AI API and signing in. Start with location `global` and model
+`gemini-3.5-flash-lite`, a low-cost model for building and testing; as your
+game develops, compare a more capable model such as `gemini-3.8-flash` on the
+same scenes. Do not use another student's project. Install the
 [Google Cloud CLI](https://cloud.google.com/sdk/docs/install). For an
 approved individual account, local login normally uses
 `gcloud auth application-default login`. An AI Studio key is a different
@@ -168,13 +172,13 @@ keep it private and avoid exposing it during demonstrations.
 Set non-secret settings in your shell, for example:
 
 ```sh
-export COURSE_MODEL='YOUR_CHOSEN_MODEL_ID'
+export COURSE_MODEL='gemini-3.5-flash-lite'  # or your provider's model ID
 # Vertex only:
-export GOOGLE_CLOUD_PROJECT='YOUR_COURSE_PROJECT'
-export GOOGLE_CLOUD_LOCATION='YOUR_APPROVED_LOCATION'
+export GOOGLE_CLOUD_PROJECT='your-project-id'
+export GOOGLE_CLOUD_LOCATION='global'
 ```
 
-PowerShell uses `$env:COURSE_MODEL = 'YOUR_CHOSEN_MODEL_ID'`, and the same
+PowerShell uses `$env:COURSE_MODEL = 'gemini-3.5-flash-lite'`, and the same
 syntax for the Vertex variables. Select exactly one live path:
 
 ```sh
@@ -197,6 +201,13 @@ These are request controls, not a guarantee of total wall-clock time or
 monetary cost. Some models need a larger reasoning/output budget and may fail
 this small check; choose a compatible model or document an intentional change
 to the limits. No automatic paid retry or downgrade is performed.
+
+When a check fails, `setup_check` names the problem and the command or link
+that fixes it, such as turning on billing or the Vertex AI API for your
+project. Settings that are blank, still placeholders, or name a retired model
+fail before any request is sent. The game prints the same problem in one line.
+If the printed fix does not work, message your instructor and TAs with a
+screenshot of the output.
 
 Every adapter validates the same JSON shape and allowed fact IDs. Valid JSON
 does not prove factual accuracy. Setup fails on errors, refusals, or unusable
