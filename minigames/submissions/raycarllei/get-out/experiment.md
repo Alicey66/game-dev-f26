@@ -18,13 +18,14 @@ exercise card's application of Schell Chapter 14 and Lens 58: The Puzzle.
 - Playtest: Ask Player A to try a bridge board and its following board,
   choosing how much help to request. Watch whether they predict where a slide
   will stop, reuse an idea, request stronger hints, skip, or abandon a puzzle.
-  Record one revealing remark and prior familiarity. My original experience
-  is recorded above; no observations of the revised version are reported yet.
+  Record one revealing remark and prior familiarity. This planned comparison
+  follows the original experience described above.
 - Next decision: Keep a bridge that helps a player explain the next board.
   Revise its walls or lesson cue if the same confusion persists; make practice
   easier to skip if it adds repetition. Keep the lightest useful hint, and
   revise a hint that prompts copying without understanding. Shortest routes
-  increase from 3 to 9 moves; move counts alone do not establish difficulty.
+  increase from 3 to 9 moves. Use route choices and player explanations to
+  judge the sequence.
 
 ## Checks
 
