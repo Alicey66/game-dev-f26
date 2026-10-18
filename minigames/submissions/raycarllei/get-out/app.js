@@ -10,6 +10,7 @@
     const visited=new Set(stops.map(point=>point.join(',')));
     $('notebook-details').hidden=!shown;
     $('notebook-toggle').disabled=editing;
+    $('notebook-feedback').hidden=!shown||editing||trace.at(-1)?.type!=='undo';
     $('notebook-count').textContent=`${stops.length} distinct stopping point${stops.length===1?'':'s'} visited, including the start.`;
     $('notebook-stops').textContent=stops.map(([r,c])=>`(${r+1}, ${c+1})`).join(' · ');
     const cells=$('board').querySelectorAll('.cell');
@@ -96,7 +97,13 @@
     if(Math.max(Math.abs(dx),Math.abs(dy))>20)move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
   });
   $('board').addEventListener('pointercancel',()=>startTouch=null);
-  $('undo').addEventListener('click',()=>{if(history.length){state=history.pop();trace.push({type:'undo'});refresh();announce('Move undone. Try another route.');}});
+  $('undo').addEventListener('click',()=>{
+    if(!history.length)return;
+    state=history.pop();trace.push({type:'undo'});refresh();
+    announce($('notebook-toggle').checked
+      ? 'Move undone. The notebook keeps every stopping point you explored, including the move you just undid.'
+      : 'Move undone. Your exploration history is kept while the notebook is hidden.');
+  });
   $('notebook-toggle').addEventListener('change',()=>{trace.push({type:'notebook-toggle',shown:$('notebook-toggle').checked});refresh();announce('Exploration notebook '+($('notebook-toggle').checked?'shown.':'hidden.')+' Your puzzle and move count are unchanged.');});
   $('reset').addEventListener('click',()=>load(initialBoard,title,prompt,levelIndex));
   $('hint').addEventListener('click',()=>{

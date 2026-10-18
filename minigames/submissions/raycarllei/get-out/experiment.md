@@ -3,8 +3,8 @@
 Principle: progress (visible progress), using the course exercise card's
 application of Schell Chapter 14 and Lens 58: The Puzzle.
 
-Status: working Codex proposal. Ray's design selection and human experience
-evidence are pending. This draft does not report a completed peer playtest.
+Status: playable version. Ray requested improvements based on AI simulated
+feedback. Human experience evidence and Ray's interpretation remain pending.
 
 ## Design and playtesting
 
@@ -13,7 +13,9 @@ evidence are pending. This draft does not report a completed peer playtest.
   The record includes the start and retains explored stops after Undo; Reset
   or a new board clears it. The visible-progress question is whether a
   truthful record of exploration helps someone choose a different route.
-  Ray has not yet confirmed this proposal as his own design decision.
+  After AI feedback, Undo now gives a contextual reminder that explored stops
+  remain, alongside the existing explanation. Hidden mode announces that
+  history is retained without revealing the stop count.
 - Possible outcomes: Codex's proposed hypothesis is that a player will use a
   marked stop to avoid an unproductive repeat. Another possible result is
   that the dots distract the player or suggest misleading progress toward
@@ -56,6 +58,17 @@ invalid-import preservation, trace download, keyboard input, and page width.
 No browser page errors were recorded. Code checks establish specified behavior; they do not
 establish a player's understanding or feelings.
 
+## Changes after AI simulated feedback
+
+Claude Code completed the reference's first board in 3 moves and the
+variation's second board in 7 moves, after an Undo. This was an AI simulation,
+using different boards, so it cannot establish a human experience benefit.
+Its report highlighted the difference between Undo and exploration history.
+The new contextual message and notebook callout explain that behavior at the
+moment of Undo. The permanent explanation already existed. Movement, boards,
+the solver and one-step hints remain unchanged. A longer hint was suggested
+without a variation-hint test; it needs separate evidence before adoption.
+
 ## Playtest observations
 
 TODO: No human observations supplied. Record anonymous labels only. The
@@ -68,11 +81,10 @@ actions separate from explanations, and mention order and prior familiarity.
 
 ## AI assistance and human decisions
 
-Codex proposed and implemented the optional notebook, wrote tests and this
-draft, and ran the checks listed above. Ray requested completion of the work
-Codex could perform independently; no design selection or human-play
-observations have yet been supplied. The assignment does not require an
-additional AI-use disclosure.
+Codex proposed and implemented the notebook, wrote tests and this draft, and
+ran the checks listed above. Claude Code supplied AI simulated play feedback;
+Ray requested this feedback-based revision. Human observations remain
+unfilled. The assignment does not require an additional AI-use disclosure.
 
 ## Independent review
 
@@ -82,3 +94,9 @@ reference and found no actionable code issues. It independently reran all
 and the changes stay inside this student folder. The implementation session
 ran the desktop and phone browser checks listed above. Human play remains
 pending. Ray and the instructor retain approval decisions.
+
+The feedback iteration received a second read-only review. No actionable
+issues were found in the contextual Undo message, callout visibility, hidden
+mode, editor/reset paths, or ownership boundary. Desktop and phone regression
+checks confirmed that the reminder appears after Undo, disappears during
+other actions, and announces no count while the notebook is hidden.

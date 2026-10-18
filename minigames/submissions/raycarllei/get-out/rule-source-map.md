@@ -7,6 +7,7 @@
 | Blocked moves and passed-through tiles add no stopping position | code: `engine.js` returns the same state on a blocked move; trace records final destination | `notebook.js`; first notebook test |
 | Undo keeps exploration history; Reset/new board clears it | assumed: Codex proposal; history describes experienced stops | `app.js` loads a fresh trace on reset/board change; notebook tests and browser checks |
 | Optional overlay does not change moves, legal actions, board, hints or outcomes | code: notebook only reads copied coordinates and trace | unchanged engine and levels; input-immutability and solver-completion test |
+| Undo explains retained exploration history at the moment of use; a hidden notebook does not announce its count | assumed: UI revision requested after AI simulated feedback, not validated human experience evidence | `app.js` Undo handler and `index.html` notebook callout; desktop/phone browser regression |
 
 The overlay presents already experienced destinations. It does not call the
 solver or reveal a future stopping point. There is no model player or new
