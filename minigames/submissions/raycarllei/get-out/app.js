@@ -4,6 +4,26 @@
   const arrows = {up:'↑',right:'→',down:'↓',left:'←'};
   let levelIndex = 0, state, history = [], trace = [], hints = 0, editing = false, draft;
   let title = '', prompt = '', initialBoard;
+  let hintTier=0, hintInfo=null;
+  function clearHint() { hintTier=0;hintInfo=null; }
+  function refreshSupport() {
+    const level=levelIndex===null?null:levels[levelIndex];
+    $('level-lesson').textContent=editing?'':level?`${level.stage} · ${level.lesson}`:'Your own challenge · Optional hints work from your current position.';
+    $('hint-panel').hidden=editing;
+    $('hint').textContent=['Hint: a question','Hint: a stopping point','Hint: the next move','Repeat the move hint'][hintTier];
+    $('hint-message').textContent=state.won?'You found the route. Try another puzzle when you are ready.':hintInfo?hintInfo.message:GetOutPacing.needsNudge(trace)?'Want a nudge? Ask for a question, or step back to an earlier puzzle.':'Take your time. Hints are optional and reveal one step at a time.';
+    $('hint-message').dataset.tier=hintInfo?String(hintInfo.tier):'0';
+    $('previous').disabled=editing||levelIndex===null||levelIndex===0;
+    $('skip').disabled=editing||levelIndex===null||levelIndex===levels.length-1;
+    $('skip').hidden=state.won;
+    $('board').querySelectorAll('.cell').forEach((cell,i)=>{
+      const target=!editing&&!state.won&&hintInfo?.target;
+      const marked=Boolean(target&&Math.floor(i/state.board[0].length)===target[0]&&i%state.board[0].length===target[1]);
+      cell.classList.toggle('hint-stop',marked);
+      const label=cell.getAttribute('aria-label').replace(', hinted stopping point','');
+      cell.setAttribute('aria-label',label+(marked?', hinted stopping point':''));
+    });
+  }
   function refreshNotebook() {
     const shown=$('notebook-toggle').checked;
     const stops=GetOutNotebook.stoppingPoints(game.create(initialBoard).position,trace);
@@ -26,12 +46,12 @@
   }
   for (const [i,level] of levels.entries()) {
     const option = document.createElement('option'); option.value = i;
-    option.textContent = `${i+1}. ${level.name}`; $('levels').append(option);
+    option.textContent = `${i+1}. ${level.name} · ${level.stage}`; $('levels').append(option);
   }
   const customOption=document.createElement('option');customOption.value='custom';customOption.textContent='Your puzzle';customOption.disabled=true;$('levels').append(customOption);
   function announce(message) { $('status').textContent = message; }
   function load(board, name, thought, index) {
-    state=game.create(board);initialBoard=board.slice();history=[];trace=[];hints=0;
+    state=game.create(board);initialBoard=board.slice();history=[];trace=[];hints=0;clearHint();
     title=name;prompt=thought;levelIndex=index;editing=false;
     customOption.disabled=index!==null;$('levels').value=index===null?'custom':String(index);
     renderBoard();refresh();announce('Choose a direction. The walls are your stopping points.');
@@ -48,9 +68,10 @@
     if(player){player.style.setProperty('--x',state.position[1]);player.style.setProperty('--y',state.position[0]);}
     $('board').setAttribute('aria-label',editing?'Puzzle editor. Choose a paint tool, then select a square.':`Puzzle board, ${state.board.length} rows and ${state.board[0].length} columns. You are at row ${state.position[0]+1}, column ${state.position[1]+1}. Arrow keys move.`);
     refreshNotebook();
+    refreshSupport();
     const list=$('trace-list');list.replaceChildren();
     if(!trace.length){const li=document.createElement('li');li.textContent='No moves yet.';list.append(li);}
-    for(const event of trace){const li=document.createElement('li');li.textContent=event.type==='move'?`${arrows[event.action]} ${event.action}: (${event.from[0]+1}, ${event.from[1]+1}) → (${event.to[0]+1}, ${event.to[1]+1})${event.blocked?' · blocked':''}${event.won?' · escaped':''}`:event.type==='hint'?`Hint requested: ${event.message}`:event.type==='notebook-toggle'?`Exploration notebook ${event.shown?'shown':'hidden'}.`:'Undid the previous move.';list.append(li);}
+    for(const event of trace){const li=document.createElement('li');li.textContent=event.type==='move'?`${arrows[event.action]} ${event.action}: (${event.from[0]+1}, ${event.from[1]+1}) → (${event.to[0]+1}, ${event.to[1]+1})${event.blocked?' · blocked':''}${event.won?' · escaped':''}`:event.type==='hint'?`Hint ${event.tier||1} requested: ${event.message}`:event.type==='notebook-toggle'?`Exploration notebook ${event.shown?'shown':'hidden'}.`:'Undid the previous move.';list.append(li);}
   }
   function renderBoard() {
     const board=$('board'), rows=editing?draft:state.board;
@@ -78,7 +99,7 @@
     if(editing||state.won)return;
     const previous=state,next=game.step(state,action);
     trace.push({type:'move',action,from:previous.position.slice(),to:next.position.slice(),blocked:next===previous,won:next.won});
-    if(next!==previous){history.push(previous);state=next;}
+    if(next!==previous){history.push(previous);state=next;clearHint();}
     refresh();
     if(state.won)announce(`You got out in ${state.moves} moves${hints?`, with ${hints} hint${hints===1?'':'s'}`:''}. What made the route click?`);
     else if(next===previous)announce(`Blocked ${action}. Try another direction; your move count stays the same.`);
@@ -99,7 +120,7 @@
   $('board').addEventListener('pointercancel',()=>startTouch=null);
   $('undo').addEventListener('click',()=>{
     if(!history.length)return;
-    state=history.pop();trace.push({type:'undo'});refresh();
+    state=history.pop();trace.push({type:'undo'});clearHint();refresh();
     announce($('notebook-toggle').checked
       ? 'Move undone. The notebook keeps every stopping point you explored, including the move you just undid.'
       : 'Move undone. Your exploration history is kept while the notebook is hidden.');
@@ -107,12 +128,14 @@
   $('notebook-toggle').addEventListener('change',()=>{trace.push({type:'notebook-toggle',shown:$('notebook-toggle').checked});refresh();announce('Exploration notebook '+($('notebook-toggle').checked?'shown.':'hidden.')+' Your puzzle and move count are unchanged.');});
   $('reset').addEventListener('click',()=>load(initialBoard,title,prompt,levelIndex));
   $('hint').addEventListener('click',()=>{
-    const path=game.solve(state);hints++;
-    const message=path===null?'There is no route from here. Undo a move or reset.':`Try ${arrows[path[0]]} ${path[0]}.`;
-    trace.push({type:'hint',message});refresh();announce(message);
+    if(editing||state.won)return;
+    hintTier=Math.min(3,hintTier+1);hintInfo=GetOutPacing.hint(state,hintTier);hints++;
+    trace.push({type:'hint',tier:hintTier,message:hintInfo.message});refresh();
   });
   function loadLevel(i){const level=levels[i];load(level.board,level.name,level.prompt,i);}
   $('next').addEventListener('click',()=>loadLevel(levelIndex+1));
+  $('previous').addEventListener('click',()=>{if(!editing&&levelIndex!==null&&levelIndex>0)loadLevel(levelIndex-1);});
+  $('skip').addEventListener('click',()=>{if(!editing&&levelIndex!==null&&levelIndex<levels.length-1)loadLevel(levelIndex+1);});
   $('levels').addEventListener('change',e=>{if(e.target.value!=='custom')loadLevel(Number(e.target.value));});
   $('edit').addEventListener('click',()=>{editing=true;draft=initialBoard.map(row=>row.split(''));renderBoard();refresh();announce('Choose a tool and tap a square. Your current game is kept until you play the new board.');});
   $('cancel-edit').addEventListener('click',()=>{editing=false;renderBoard();refresh();announce('Back to your puzzle.');});

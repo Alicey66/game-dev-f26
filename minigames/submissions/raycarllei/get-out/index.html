@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Get Out! · Route notebook</title>
+<title>Get Out! · Gradual challenge</title>
 <link rel="stylesheet" href="style.css">
-<script src="engine.js" defer></script><script src="levels.js" defer></script><script src="notebook.js" defer></script><script src="app.js" defer></script>
+<script src="engine.js" defer></script><script src="levels.js" defer></script><script src="notebook.js" defer></script><script src="pacing.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
 <header class="masthead"><a class="brand" href="./">GAME LAB <span>/ 05</span></a><span class="course">AI IN PRACTICE · COLUMBIA</span></header>
@@ -12,11 +12,14 @@
 <section class="intro"><div><p class="eyebrow">A SMALL PUZZLE ABOUT CHANGING DIRECTION</p><h1>Get Out<span>!</span></h1><p class="lede">One way out. A few useful walls.<br>Slide, stop, and find your next move.</p></div><div class="rule-card"><span class="rule-number">01 →</span><p>Choose a direction. You slide until a wall or the edge stops you. Reach the door to escape.</p><small>Arrow keys, WASD, swipe, or the direction buttons.</small></div></section>
 <div class="workspace">
 <section class="play-panel" aria-label="Puzzle play area">
-<div class="board-heading"><div><p class="eyebrow" id="level-number">PUZZLE 01 / 04</p><h2 id="level-title">Find your feet</h2></div><div class="counter"><strong id="moves">0</strong><span>MOVES</span></div></div>
+<div class="board-heading"><div><p class="eyebrow" id="level-number">PUZZLE 01 / 07</p><h2 id="level-title">Find your feet</h2></div><div class="counter"><strong id="moves">0</strong><span>MOVES</span></div></div>
+<p id="level-lesson" class="level-lesson"></p>
 <div id="board" class="board" tabindex="0" role="group" aria-label="Puzzle board. Use arrow keys to move."></div>
 <div class="legend"><span><i class="you-key"></i>You</span><span><i class="exit-key"></i>Exit</span><span><i class="wall-key"></i>Wall</span><span><i class="start-key"></i>Start</span></div>
+<div class="dpad" aria-label="Direction controls"><button data-move="up" aria-label="Move up">↑</button><button data-move="left" aria-label="Move left">←</button><button data-move="down" aria-label="Move down">↓</button><button data-move="right" aria-label="Move right">→</button></div>
 <p id="status" role="status" aria-live="polite">Find a stopping point that helps you reach the exit.</p>
-<div class="play-actions"><button id="undo" class="secondary">↶ Undo</button><button id="reset" class="secondary">↺ Reset</button><button id="hint" class="secondary">One hint</button><button id="next" class="primary" hidden>Next puzzle →</button></div>
+<div class="play-actions"><button id="undo" class="secondary">↶ Undo</button><button id="reset" class="secondary">↺ Reset</button><button id="next" class="primary" hidden>Next puzzle →</button></div>
+<section id="hint-panel" class="hint-panel" aria-label="Optional puzzle hints"><p id="hint-message" role="status" aria-live="polite"></p><button id="hint" class="secondary">Hint: a question</button></section>
 </section>
 <aside>
 <section class="side-card notebook-panel" aria-label="Exploration notebook">
@@ -24,7 +27,7 @@
 <label class="notebook-control"><input id="notebook-toggle" type="checkbox" checked> Show visited stopping points</label>
 <div id="notebook-details"><p id="notebook-count" role="status" aria-live="polite"></p><p id="notebook-feedback" class="notebook-feedback" hidden>Undo kept your explored stops. The dots remember where you have been.</p><p class="small">Dots mark where you have stopped. Undo keeps this history; Reset or a new board clears it. This records exploration, not distance to the exit.</p><details><summary>Visited coordinates (row, column)</summary><p id="notebook-stops" class="small"></p></details></div>
 </section>
-<section class="side-card"><p class="eyebrow">YOUR NEXT MOVE</p><div class="dpad" aria-label="Direction controls"><button data-move="up" aria-label="Move up">↑</button><button data-move="left" aria-label="Move left">←</button><button data-move="down" aria-label="Move down">↓</button><button data-move="right" aria-label="Move right">→</button></div><p id="prompt" class="thought"></p><label for="levels">Choose a puzzle</label><select id="levels"></select></section>
+<section class="side-card"><p class="eyebrow">YOUR PACE</p><p id="prompt" class="thought"></p><label for="levels">Choose a puzzle</label><select id="levels"></select><div class="pacing-actions"><button id="previous" class="secondary">← Step back</button><button id="skip" class="secondary">Skip this puzzle →</button></div><p class="small">Choose any puzzle. Switching starts a fresh attempt.</p></section>
 <section class="side-card discussion"><p class="eyebrow">PAUSE & DISCUSS</p><h3>Closer to the door.<br>Closer to a solution?</h3><p>When did a wall become useful? What changed your mind about your next move?</p></section>
 <section class="side-card"><p class="eyebrow">WORKSHOP COMPANIONS</p><p>Choose a puzzle question, then build and test your variation.</p><div class="guide-buttons"><button class="secondary" data-guide="designers-guide">Designer’s guide</button><button class="secondary" data-guide="codex-guide">Codex starter guide</button></div></section>
 <section class="side-card"><p class="eyebrow">MAKE ONE FOR A PARTNER</p><p>Arrange the walls. Choose a start and an exit. Can you create a moment of discovery?</p><button id="edit" class="primary">Design a puzzle ↗</button>

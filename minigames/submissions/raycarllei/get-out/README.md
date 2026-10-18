@@ -1,13 +1,14 @@
-# Get Out! browser puzzle workshop
+# Get Out! Gradual challenge
 
 A classroom adaptation of Eric Zimmerman's **Get Out!**, exercise 11 in
 *The Rules We Break* (printed pp. 90–97; game sheets pp. 185–189).
-The interface and four teaching boards were created for this course.
+The course interface and four original teaching boards are retained. Three
+bridge boards add practice between them, making seven boards in this version.
 The book's artwork, sample board, and prose are not bundled.
 
 ## Play
 
-Open `minigames/get-out/index.html` directly in a browser. No installation,
+Open this folder's `index.html` directly in a browser. No installation,
 build, account, API key, or runtime network connection is needed.
 
 Alternatively, from the repository root:
@@ -16,7 +17,7 @@ Alternatively, from the repository root:
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000/minigames/get-out/>. For classroom phone access,
+Open <http://localhost:8000/minigames/submissions/raycarllei/get-out/>. For classroom phone access,
 serve these static files through the course's approved hosting route.
 A localhost URL belongs to the device running the server. Campus Wi-Fi may
 prevent phones from reaching a laptop server. Hosting is not configured here.
@@ -26,8 +27,12 @@ prevent phones from reaching a laptop server. Hosting is not configured here.
 - Reach the exit to win, including when you encounter it during a slide.
 - Blocked directions leave the board and move count unchanged.
 - Undo reverses a successful move; reset starts a fresh attempt and trace.
-- Optional hints reveal the next move on a shortest route from your position.
-  Hint requests appear in the trace and completion message.
+- Optional hints reveal a question, then an outlined stopping point, then
+  the next move. Each successful move or Undo starts a fresh hint sequence.
+  Hint tiers appear in the trace.
+- Seven boards move from warm-up through practice to challenge. Step back
+  or skip ahead at any time; switching starts a fresh attempt.
+- Repeated blocked moves or loops offer optional help without changing play.
 
 The border and mid-slide exit conventions are explicit classroom rules.
 This version covers the basic wall puzzle, without the book's advanced pieces.
