@@ -1,11 +1,16 @@
-# Variation rule and display map
+# Misdelivered Stamp: rules and evidence
 
-All movement rules remain identical to the course reference in `minigames/get-out/engine.js`.
+The stamp rules below are **assumed**: explicit designer choices supplied by the student, not claims about the source game. Ordinary sliding, walls, blocked actions and exit crossing remain the reference rules. Changes stay in the student copy.
 
-| Display rule | Implementation | Evidence | Check |
+| Rule | Evidence | Implementation | Check |
 | --- | --- | --- | --- |
-| Record start and each distinct successful arrival, not crossed floor cells. | `exploration.js`: `start`, `record`; `app.js`: `move` | assumed: new designer-selected variation; course EXERCISES.md `progress` suggests visited stopping positions | `tests/exploration.test.cjs` distinct stops and blocked moves |
-| Undo preserves discoveries in this attempt; reset, next board, and valid board import start a new record. | `app.js`: `load`, Undo handler, `refreshExploration` | assumed: explicit on-screen design convention | notebook tests and browser smoke checks |
-| Dots indicate explored locations, not distance or percentage toward solving. | `index.html`: Exploration notebook; `style.css` | code: course EXERCISES.md warns straight-line distance is not reliable progress | visible wording and narrow-screen browser checks |
+| Up to two reachable non-start/non-exit floor stops carry Stop/Turn/Detour author labels; exchange preserves labels and accepts legacy board text. | assumed: selected stamp design | stamps.js validate, parse, encode | validation, reachability, roundtrip tests |
+| Only a normal slide ending on an unjudged stamp offers opening. Skip is free and revisiting offers it again. A guess is consumed once per stamp per round. | assumed | stamps.js move, open, skip, guess | stop/cross/skip/revisit and one-guess tests |
+| An unmatched guess is recorded before preview. Recent three distinct normal stops, excluding the current position, form the uniform random destination pool; no pool falls back to start. Teleport and Undo add no normal stops. | assumed | stamps.js candidates, guess, deliver | candidate order/dedup, RNG boundaries, event-order tests |
+| Preview locks movement, another guess, Undo, Reset and editing until confirmed. Teleport changes position only, increments misdeliveries, never wins or opens another stamp. | assumed | stamps.js guards, deliver; app.js controls | pending-lock, teleport/win/offer tests; browser |
+| Undo restores one position change at a time: teleport first, then the preceding slide. It never restores a spent guess or deletes actual-stop/judgment history. | assumed | stamps.js undo | two-step undo and audit retention tests |
+| Reset clears round moves/stamps/stop history, but keeps reset count and judgment audit; changing/importing/editing/reloading starts a new session. | assumed | stamps.js reset; app.js load | first/retry statistics and reset tests |
+| Author highlights all possible incoming blocking faces; player highlights the actual incoming blocking face. Exit sightlines depend only on geometry, never on author label. | assumed | stamps.js geometry | label-independent geometry tests; browser |
+| Sliding alone can win. Hints solve the current position without requiring optional guesses. Solver recognizes a winning return to an exit after a non-winning teleport onto it. | code: reference escape rule; assumed: teleport-only non-win | engine.js solve terminal check; stamps.js hint | inherited engine tests; exit-position solver regression |
 
-No new legal actions, movement rules, success conditions, or solver answers are introduced. Notebook data is display-only; it is added as optional metadata to the downloadable trace. The solver does not receive or depend on it.
+The course Designer’s guide and `hints` exercise inform the question about supporting discovery with small interventions. These are an application of Schell Chapter 14/Lens 58, not a quotation. Matching an author label is never presented as proof of understanding.

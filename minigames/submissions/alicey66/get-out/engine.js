@@ -43,6 +43,7 @@
       if (item.state.won) return item.path;
       for (const action of legalActions(item.state)) {
         const next = step(item.state, action), key = next.position.join(',');
+        if (next.won) return [...item.path, action];
         if (!seen.has(key)) {
           seen.add(key); queue.push({state: next, path: [...item.path, action]});
         }

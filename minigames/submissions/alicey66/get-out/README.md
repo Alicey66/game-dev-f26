@@ -1,174 +1,81 @@
-# Get Out: Exploration notebook
+# Get Out: Misdelivered Stamp
 
-Author: alicey66. Principle: visible progress, using the course's application of Schell Chapter 14 and Lens 58: The Puzzle.
+**Zixuan Yang · UNI: zy2786 · GitHub owner: alicey66**
 
-Open `index.html` directly in a browser. This copy adds dots at distinct reached stopping positions and a notebook listing their coordinates. The start counts as one discovery. Crossed cells and blocked moves add nothing. Undo retains discoveries; Reset, changing levels, or loading a valid custom board clears them. The notebook is hidden while editing and restored when editing is canceled. Dots record exploration, not proximity to solving. Movement and solver code are unchanged.
+A puzzle author marks a useful stopping point with an intention. The recipient decides whether to open that stamp and match the author’s label. A mismatch changes the player’s position within a previewed set of previously visited stops. The exit remains the goal; collecting stamps is optional.
 
-## Design and playtesting
+## Run and play
 
-The four-point review statement is in `PR_BODY.md`; use that file as the actual PR description. Predictions and synthetic results are explicitly separated from human experience. No human playtest or peer exchange is claimed.
+Open this folder’s `index.html` directly in a browser. No build, account, network, or runtime model is needed. Use arrow keys, WASD, swipe, or direction buttons. Choose a direction and slide until a wall or boundary stops you. Crossing the exit during a normal slide wins immediately. A blocked direction costs no move. Undo, Reset, direct hints, board editing and exchange remain available.
 
-## Checks and simulation
+The first board introduces two stamps. The second places two stamps later in the route, allowing a mismatch to preview several past stops. The other boards retain ordinary escape play and can be edited to add stamps.
 
-From the class repository root:
+## Author a board: point, then label
+
+Choose **Design a puzzle**. Stamp placement is selected by default. Tap a reachable floor stopping point, then choose one label:
+
+| Label | Shared definition |
+| --- | --- |
+| ⚓ Stop | Use an obstacle to obtain a stopping position. |
+| ↱ Turn | Use this position to change the next sliding direction. |
+| ↝ Detour | Move away from the exit to build a later route. |
+
+There is no text field and no direction to assign. Up to two distinct stamps are allowed. Start, exit, wall and transit-only squares cannot hold stamps. Saving and Check & play verify both the board’s solvability and the stamp’s reachability. Later wall edits may invalidate a stamp; export and Check & play recheck it. Cancel restores the current play session; successfully playing an edited board starts a new session.
+
+Author mode highlights the blocking faces associated with possible normal arrivals at the selected stop, plus unobstructed exit sightlines. During play, a normal arrival at a stamp highlights its actual blocking face and available exit sightlines. These cues are computed from the board and arrival direction, never from the author’s label. They show geometry, not an approved interpretation.
+
+## Open, match, or leave it alone
+
+Unjudged stamps display **?**. Only a normal slide ending there offers **Open stamp** or **Keep moving**; crossing the square does not. Moving away or choosing Keep moving leaves the stamp undecided. A later normal visit can offer it again.
+
+Opening displays the three shared labels and a reminder of the consequence. The player may choose a label or continue without judging. Each stamp permits one judgment per round. Matching the author makes the stamp gold; a mismatch makes it grey. Both remain in the album with **Author / You** labels. The wording is “Matched / Not matched,” not a grade of comprehension.
+
+The album reports **Matched · Judged · Total** separately. Unopened and skipped stamps are not mismatches. A stamp can fit multiple labels, so agreement is a description of the exchange, not a claim that the author has the only defensible interpretation.
+
+## A mismatch changes position
+
+1. Record the judgment and consume that stamp’s opportunity for the round.
+2. Look backwards through actual normal-slide stops in this round. Select the most recent three different positions, excluding the current one. With fewer than three, use those available; with none, use the original start.
+3. Highlight the entire pool and list its coordinates. Every candidate has equal probability. The player chooses **Confirm position change** after inspecting it.
+4. Move to the sampled position without adding a slide move. Increment the round’s position-change count. Do not trigger victory or offer another stamp, even if the destination contains one.
+
+Movement, another judgment, Undo, Reset, editing, board import and level changes are locked while choosing a label or confirming the preview. Continue without judging leaves the choice stage; a recorded mismatch must finish its position change. Downloads remain available.
+
+Teleport and Undo do not enter the normal-stop history. Undo also does not erase actual stops already visited, so a previously visited but undone stop can remain a candidate. A normal slide onto the exit can enter that history; a later teleport onto the exit does not win. Hints correctly handle leaving and returning to such an exit position.
+
+## Undo, Reset and session boundaries
+
+Immediately after a position change, the first Undo returns to the stamp. The judgment remains spent. A second Undo reverses the preceding slide. In general, each Undo reverses the most recent position change; if the player has made further slides, those are undone first. Judgment history and the count of actual deliveries are not rolled back.
+
+Reset begins another round on the same board. It restores stamps and position and clears round moves, hints, position-change count and normal-stop history. It retains cumulative Reset count, all previous judgments and the session’s action trace.
+
+Each stamp’s first recorded judgment belongs to the first-judgment summary. All later judgments after Reset belong to the retry summary, even if some intervening rounds left that stamp unopened. The summaries report matches and judgments separately. Three choices give a uniform random guess an expected agreement rate of one third; two stamps are far too few to treat agreement as a measure of learning.
+
+Changing, importing, or successfully editing a board starts a new session, as does reloading the page. Statistics are not stored across reloads. This is transparent session bookkeeping, not an anti-cheat system.
+
+## Exchange and return a playtest
+
+Use **Exchange a board → Copy board + stamps**, then send the entire code to a partner using this variation. The code includes the board and author labels, but no player judgments or Reset statistics. Original S/E/#/. board text still imports here without stamps. The unmodified reference does not understand stamp codes. Invalid imports leave the current session unchanged.
+
+After playing, choose **Inspect your move trace → Download trace**. The file includes first and retry judgments, Reset count, stamp offers/skips, slides, hints, previews, deliveries and Undo. The recipient can return that file to the author. Under **Author: review a returned playtest**, the author selects it locally and sees summaries plus the judgments. Reading a returned file does not replace the active game or send data anywhere. Use anonymous player labels when discussing results.
+
+The reader checks the trace’s structure and judgment consistency. It does not prove that a file is unedited or reconstruct a human’s reasoning. The author’s labels are hidden in the normal play interface but travel in the exchange data; this is a presentation convention, not a secrecy guarantee.
+
+## Design and next test
+
+The course guide’s useful-hint question, applying Schell Chapter 14 and Lens 58, prompted the exchange of intentions rather than direction answers. The risk introduces a deliberate conflict: a clue can invite curiosity and also become something to avoid. The test should distinguish choosing not to participate from failing to understand the puzzle.
+
+The four required reflection sections are in `PR_BODY.md`. They propose comparing author intention, recipient explanation and subsequent actions. They do not treat a high match count as proof of understanding or a single session as a causal test of risk. The design remains small: one stamp protocol, three labels and a bounded consequence, with no required collection goal.
+
+## Checks and credits
+
+From the repository root:
 
 ```sh
 python3 scripts/minigames.py check --owner alicey66
 python3 scripts/minigames.py test --owner alicey66
-node minigames/submissions/alicey66/get-out/simulate.cjs
 ```
 
-`simulation-results.json` is reproducible output from `simulate.cjs`. Agents use known rules and one-step lookahead; their results cannot establish human understanding or enjoyment. `experiment.md` records limitations and the next test.
+There are 24 deterministic game tests: seven inherited sliding checks and seventeen stamp/session checks. The submission keeps all changes in the owner folder. `rule-source-map.md` records new designer conventions; `experiment.md` lists local verification and the planned player session.
 
-## Source and attribution
-
-This variation copies the course's browser adaptation and teaching boards. It adds original notebook code; no external assets or runtime services are added. The class guide's `progress` exercise applies Schell's puzzle-design discussion; no book passage is quoted or reproduced. The reference documentation and credits follow.
-
----
-
-# Get Out! browser puzzle workshop
-
-A classroom adaptation of Eric Zimmerman's **Get Out!**, exercise 11 in
-*The Rules We Break* (printed pp. 90–97; game sheets pp. 185–189).
-The interface and four teaching boards were created for this course.
-The book's artwork, sample board, and prose are not bundled.
-
-## Play
-
-Open `minigames/get-out/index.html` directly in a browser. No installation,
-build, account, API key, or runtime network connection is needed.
-
-Alternatively, from the repository root:
-
-```sh
-python3 -m http.server 8000
-```
-
-Open <http://localhost:8000/minigames/get-out/>. For classroom phone access,
-serve these static files through the course's approved hosting route.
-A localhost URL belongs to the device running the server. Campus Wi-Fi may
-prevent phones from reaching a laptop server. Hosting is not configured here.
-
-- Move with arrow keys, WASD, swipe, or the on-screen direction buttons.
-- Slide in one direction until a wall or the outside border stops you.
-- Reach the exit to win, including when you encounter it during a slide.
-- Blocked directions leave the board and move count unchanged.
-- Undo reverses a successful move; reset starts a fresh attempt and trace.
-- Optional hints reveal the next move on a shortest route from your position.
-  Hint requests appear in the trace and completion message.
-
-The border and mid-slide exit conventions are explicit classroom rules.
-This version covers the basic wall puzzle, without the book's advanced pieces.
-
-## In-game workshop guides
-
-Open **Designer’s guide** or **Codex starter guide** from Workshop companions
-beside the board (below it on phones). The guides expand within the game and
-preserve the current puzzle. They are bundled with each scaffolded copy and
-work offline, including inside the generated gallery. External installation
-links need an internet connection. During a browser check, open both guides
-after making a move and confirm the move count stays unchanged; arrow keys
-used while focusing the guide should not move the player.
-
-The designer's guide offers ten Schell-inspired questions with experiments
-and observations, plus a human-playtest checklist. The Codex guide follows
-play, exchange, and one plain-language request. The skill discovers the GitHub
-login and creates the branch and copy; Codex handles checks and the later draft
-PR. Building requires the full class repository, not just a downloaded gallery.
-
-In the course's third edition, Schell's puzzle chapter is 14, with Lens 58;
-chapter 13 covers balance. Guide text is original classroom interpretation.
-
-## Design and exchange
-
-Choose **Design a puzzle**, select a wall, clear, start, or exit tool, and
-click/tap cells. A fresh board is 7 × 7. The editor preserves your current
-game until you choose **Check & play**; Cancel returns to it.
-
-Check & play verifies a single start and exit and at least one solution.
-It does not reveal the solution. **Exchange a board** exports a plain-text
-code that a partner can paste and load:
-
-```text
-S..#...
-...#...
-.......
-..##E..
-#......
-.....##
-#....#.
-```
-
-`S` is the start, `E` the exit, `#` a wall, and `.` an empty square. Boards
-must be rectangular, between 2 and 20 rows and columns, with exactly one
-start and exit. Invalid or unsolvable imports preserve the current game.
-Boards and progress are kept in memory only. Copy the board code before
-closing or reloading the page.
-
-## Classroom sequence
-
-1. Solve a sample in pairs. Predict each stopping point.
-2. Design a board and record a solution privately.
-3. Exchange board codes with a neighboring pair. Observe without coaching.
-4. Discuss: When did a wall become useful? Did proximity to the door mean
-   progress? What created a moment of discovery?
-5. Inspect the trace. Distinguish legal moves, reaching the goal, efficiency,
-   and the human experience.
-
-Hints and traces support discussion; they are not a graded leaderboard.
-The board uses symbols as well as color, visible focus, keyboard and touch
-controls, status announcements, and reduced-motion preferences. The spatial
-puzzle has not been validated as a complete screen-reader-only experience.
-
-## Rules API and future agent scaffold
-
-`engine.js` is dependency-free and shared by the browser and Node:
-
-```js
-const game = require('./engine.js');
-let state = game.create(['S..', '...', '..E']);
-const observation = game.observe(state);
-const actions = game.legalActions(state);
-state = game.step(state, 'right');
-```
-
-- `create(board)` validates and creates an initial state.
-- `observe(state)` returns a detached, fully visible board, player position,
-  move count, terminal flag, and legal actions.
-- `step(state, direction)` returns the resulting state without mutating the
-  input. It rejects unknown directions. Terminal states cannot move.
-- `solve(state)` returns a shortest direction sequence, `[]` for a won
-  state, or `null` if the exit is unreachable. It searches stopping positions.
-
-`solve` is the instructor reference and hint provider. A future model player
-should receive only observations and submit actions through a bounded runner;
-keep solver answers and development tools outside that player's access.
-There is no model player or live model connection in this minigame yet.
-
-Trace downloads contain the starting board, attempted directions, outcomes,
-undo and hint events, and final position. Coordinates in JSON are zero-based;
-the visible trace uses one-based coordinates. Reset begins a new trace.
-
-## Checks
-
-From the repository root, with Node installed:
-
-```sh
-node --test minigames/get-out/tests/engine.test.cjs
-```
-
-The rules tests cover wall/border movement, blocked and invalid actions,
-exit crossing, terminal behavior, shortest paths, unreachable exits, malformed
-boards, detached observations, and the teaching boards' solvability.
-
-Browser smoke check: finish the first board (down, right, down), undo, reset,
-request a hint, edit a wall, play the custom board, export and reload its
-code, reject an unsolvable code, and download a trace. Repeat movement with
-phone controls and confirm the page fits the screen.
-
-## Sources
-
-- Eric Zimmerman, *The Rules We Break*, exercise 11, Get Out!, pp. 90–97.
-- Author's printable game sheets: <https://theruleswebreak.com/gamesheets.html>.
-- Course adaptation: original boards, browser interface, explicit border/exit
-  rules, hints, undo, board exchange, and trace export.
+The course adaptation is based on Eric Zimmerman’s *Get Out!*, exercise 11 in *The Rules We Break*. The four teaching boards and workshop guides are retained. Schell’s *The Art of Game Design*, third edition, Chapter 14/Lens 58 and the course’s original exercise cards inform the design; no book passage is quoted. Codex assisted with implementation, tests and editing. No external assets or runtime services were added.

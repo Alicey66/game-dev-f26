@@ -1,46 +1,33 @@
-# Get Out experiment: alicey66
+# Misdelivered Stamp: design and verification
 
-Principle: progress (visible progress).
+**Zixuan Yang · UNI: zy2786**
 
-## Prediction and proposed decision
+## Design question and prediction
 
-Proposed before implementation: mark distinct reached stopping positions so a player can recognize repeated routes and choose an alternative without being shown a solution. This is a Codex-proposed draft following the student's request to choose and build a variation. The student still owns the final design decision. Predicted human behavior: consult the marks after a repeated stop. An alternative is to ignore them or mistakenly avoid necessary revisits. The text explicitly labels exploration rather than closeness to victory.
+Does a cost for mismatching an author’s intention invite closer observation, or make an optional clue something to avoid? A recipient may deliberately reach a stamp, inspect the geometry and explain a useful relationship. Alternatively, they may bypass stamps, guess labels, or give a reasonable explanation that differs from the author’s category. These outcomes would call for different revisions.
 
-## Implementation
+The course guide’s useful-hint exercise, informed by Schell Chapter 14/Lens 58, is the design starting point. Stop/Turn/Detour describe author choices, not exclusive truths. Matching is not a comprehension score. A uniform three-way guess has expected agreement 1/3; two stamps provide descriptive counts only.
 
-`exploration.js` stores immutable lists of visited stop coordinates; `app.js`, `index.html`, and `style.css` display them. The start is included. Only successful arrivals count; crossed cells do not. Undo preserves knowledge, reset/new board clears it. Editor cancel preserves the attempt; successful imports reset it. Trace downloads include notebook metadata. `engine.js`, `levels.js`, and the solver are copied unchanged from the reference.
+## Planned player session and next decision
 
-The new notebook tests were written first and initially failed because the module did not yet exist. After implementation, `python3 scripts/minigames.py check --owner alicey66` passes and `python3 scripts/minigames.py test --owner alicey66` passes all 11 tests (7 inherited engine checks and 4 notebook checks). The local display-rule map is `rule-source-map.md`.
+Author B marks a board and privately states the intended idea at each stamp. Player A receives the shared label definitions and the consequence explanation, then plays without coaching. Record stamp arrivals, opening/skipping, pauses around highlights, first judgments, Undo, Reset and subsequent moves. Ask why the author marked the stop and compare the explanation with the stated intention. These are proposed observations, not measured player outcomes.
 
-## Actual automated observations
+If players avoid stamps, test a consequence-free first mismatch. If agreement is low but explanations are reasonable, revise definitions. If immediate Undo dominates, reconsider the position-change cost. Frequent Reset calls for clearer one-guess-per-round feedback. A later marked-board comparison with and without the consequence, using comparable unfamiliar boards and reversed order across pairs, could test risk more directly. One session cannot attribute avoidance to risk alone.
 
-No human or classmate is simulated or impersonated. `simulate.cjs` runs four boards, 100 seeds per board and policy, with a budget of 200 legal moves per episode. Both policies use the same engine. The baseline chooses legal moves uniformly; the notebook policy prefers unvisited endpoints, requiring perfect-information one-step lookahead. The full reproducible results are `simulation-results.json`.
+## Rule evidence and boundary
 
-| Board | Baseline completion | Notebook-policy completion | Baseline mean moves, all episodes | Notebook-policy mean moves, all episodes |
-| --- | --- | --- | --- | --- |
-| Find your feet | 100/100 | 100/100 | 8.35 | 4.04 |
-| Take the long way | 100/100 | 100/100 | 42.25 | 11.61 |
-| Change direction | 92/100 | 100/100 | 67.80 | 10.78 |
-| A useful detour | 72/100 | 100/100 | 116.13 | 13.90 |
+All new stamp rules are marked **assumed** designer choices in `rule-source-map.md`. The central tests were written before implementation and initially failed because `stamps.js` did not exist. Ordinary slides, blocked actions and crossing the exit preserve the reference behavior. Stamp/session state is owned by the pure rules module; UI handlers request validated transitions.
 
-Unfinished episodes contribute their attempted moves to the all-episode mean; success-only means are separately reported in JSON. These are agent-policy results, not human completion times.
+The student solver adds one winning-successor check. This is needed if a non-winning teleport lands on a previously visited exit: a later normal leave-and-return route must still be recognized by hints. A regression test reproduces that case. Optional stamps never need to be judged to follow an escape hint. Author labels do not affect geometry highlights or normal escape routes.
 
-## Planned human playtest
+Actual normal-slide stops remain in the candidate history after Undo; teleport and Undo add no stops. A mismatch is audited before the preview. Confirmation samples uniformly from at most three distinct candidate positions. The recorded judgment survives both steps of Undo. Reset clears the round while retaining session judgments, trace and Reset count; board load/edit/reload starts a new session.
 
-TODO: actual manual reference play and peer board exchange are not evidenced. No anonymous human label is used for a bot.
+## Local checks
 
-For a future Player A session, give an unfamiliar board and watch without coaching. Record board/version/order, repeat stops, hints, resets, completion, and any decision referencing the notebook. Ask "What were you trying to do?" and "What changed your understanding?" With more participants, counterbalance order and boards to reduce practice effects. Ask whether a visited mark means a place can never be useful again, to check for misleading progress cues.
+- Submission validation passes; all 24 game tests pass.
+- All 83 repository tests pass in the locked Python environment.
+- Browser workflows pass at 320/390/1280 px with no page errors or horizontal overflow: optional opening, skip/revisit, matching, mismatch preview locks, one- and three-candidate delivery, two-step Undo, Reset and first/retry audit, atomic invalid import, board/stamp exchange, legacy text, local returned-trace summaries, author placement/removal/label changes, label-independent highlights, crossing without opening, no chained stamp offer, keyboard/touch, hints, both guides and all four escape routes.
+- Trace export includes judgment audit and Reset events; author exchange excludes session results. The trace reader checks structure and judgment consistency, not tamper-proof provenance or human understanding.
+- Levels match the reference. Source edits are confined to `minigames/submissions/alicey66/get-out/`. An independent read-only review found no remaining concrete defects and reran all 24 game tests successfully.
 
-## Interpretation and next decision
-
-The simulation shows that a policy using explored-state memory can outperform this random baseline on these boards. It does not show that the UI teaches people to use that policy, nor establish confidence, satisfaction, or puzzle difficulty. Different policies are a confound; random seeds are not independent human participants. Keep marks if players use them without treating them as completed subgoals. If they avoid useful revisits, revise the legend or try a coordinate-only notebook. If the panel is ignored, first test its placement. No design revision based on invented human feelings has been made.
-
-## Checks and independent review
-
-- Submission check passes; 11 owner game tests pass. All repository game tests pass and the gallery builds.
-- `uv run --frozen python -m unittest discover -s tests -v`: 43 tests pass. The first run without the locked environment failed on a missing `anthropic` dependency; installing the lockfile environment resolved it without changing project dependencies.
-- Headless Chromium checks at widths 320, 390, and 1280 pass: arrows/Space/Enter-compatible native controls, touch direction buttons on phones, successful and blocked moves, Undo, Reset, unchanged hints, both workshop guides preserving state, editor Cancel, level changes, all four solver routes, valid board import, rejected unsolvable import preserving state, and generated trace JSON with explored coordinates. Zero horizontal overflow and no page errors. The trace payload was verified; an operating-system save dialog was not assessed.
-- An independent read-only Codex review compared the variation to the reference, ran all 11 tests, and reproduced the simulation JSON. No concrete findings. It confirmed that movement and level files exactly match the reference, display conventions agree with the code, the diff stays within the owner folder, and synthetic evidence is labeled accurately. This is code review, not human experience evidence.
-- The local environment has no authenticated GitHub CLI session; no push, PR, or remote CI result is claimed. The user's Windows session previously verified the GitHub login Alicey66; its lowercase spelling is used for this draft's ownership.
-
-Code review does not substitute for a human playtest. The student and instructor retain approval and merge decisions.
+Known limits: overlapping labels, a small number of decisions, page-session-only statistics, and a random consequence layered onto a deterministic puzzle. The preview can contain a single position, so an early mismatch may be deterministic. Human observations and remote CI are separate from local code checks.

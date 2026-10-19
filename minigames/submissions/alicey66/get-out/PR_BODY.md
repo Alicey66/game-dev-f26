@@ -1,22 +1,27 @@
-## Get Out: Exploration notebook
+## Get Out: Misdelivered Stamp
 
-Adds one visible-progress variation in `minigames/submissions/alicey66/get-out/`. Movement, collision, exit detection, and the shortest-path solver remain unchanged. The shared reference and other students' folders are untouched.
+**Zixuan Yang · UNI: zy2786**
+
+Open `minigames/submissions/alicey66/get-out/index.html` in a browser. The first two boards include example stamps. All PR changes are in this submission folder.
 
 ## Design and playtesting
 
-- **Decisions:** Add dots at reached stopping positions and a small coordinate notebook. The idea follows the class guide's application of Schell Chapter 14 and Lens 58: make progress visible. Here progress means remembering explored states, not being physically closer to the exit. Undo retains discoveries; Reset or a different board clears them. The intended benefit is less repeated guessing without revealing a solution.
-- **Possible outcomes:** A player may notice a repeated stop and choose another direction, suggesting that the notebook supports route planning. Alternatively, they may ignore the dots, find them distracting, or avoid a necessary revisit because it looks "finished." Those outcomes would suggest poor visibility, clutter, or misleading framing. Completing a board faster alone would not establish understanding.
-- **Playtest:** No classmate or human playtest is claimed. Automated simulation ran 100 seeds per policy on each of four boards. A random legal-action baseline was compared with a policy that prefers unvisited stopping positions using one-step lookahead. On the first board, mean moves were 8.35 versus 4.04, and mean revisits 4.61 versus 0.27. This tests different agent policies, not the causal effect of dots on people. Planned human test: observe Player A on an unfamiliar board without coaching; record revisits, hints, resets, completion, and whether the notebook informs a stated decision. Ask "What changed your understanding?" Counterbalance reference/variation order across players and boards if available.
-- **Next decision:** Keep the notebook if players use it to plan while recognizing that revisiting can be useful. If they treat dots as solved cells, revise the legend or replace dots with an optional coordinate record. If they ignore it, investigate visibility before adding features. No conclusion about human confidence, fun, or understanding follows from the simulation. Checks and any remaining limitations are recorded below.
+### Decisions
 
-## Checks
+I changed board exchange into a small negotiation over the author’s intention. The author places up to two stamps and chooses Stop, Turn, or Detour; the player can open a stamp after stopping on it, or leave it alone. The game compares labels rather than declaring an interpretation correct. A position can reasonably fit more than one label. Geometry highlights use the same rules for every label, so they offer context without encoding the author’s answer.
 
-- Submission validation passes.
-- All 11 deterministic game/notebook tests pass.
-- Reproducible automated simulation included (`simulate.cjs`, `simulation-results.json`).
-- Browser checks at 320/390/1280px: movement, completion, hints, Undo/Reset, notebook updates, both guides, editor Cancel, imports, and trace payload pass with no overflow or page errors.
-- Independent read-only review found no concrete issues and reproduced the simulation.
-- Full Python suite: 43 tests pass using the locked environment. Gallery generation passes.
-- Remote CI has not run; the PR is not yet created from this environment.
+A mismatch records the judgment, then previews a position change to one of the last three distinct normal stops, excluding the current position. This adds a cost to opening a stamp while leaving escape independent of stamp collection. I drew on Schell Chapter 14/Lens 58 through the course guide’s useful-hint exercise. My question is whether risk encourages closer attention to an author’s clue or makes that clue something to avoid.
 
-Reference manual play and peer board exchange have not been evidenced. This is a draft experiment with a concrete future human-test plan, not a report of a simulated person.
+### Possible outcomes
+
+I expect some players to plan a stop, inspect its geometry, and explain why the author marked it. Others may skip stamps after seeing a mismatch. That would suggest the risk competes with the exchange of ideas. Low agreement with a reasonable explanation would point to ambiguous labels; high agreement without a useful subsequent move could reflect guessing. With three choices and only two stamps, match counts are descriptive, not evidence of learning. First judgments and retries after Reset are reported separately.
+
+### Playtest
+
+I would ask Author B to mark a board and state the intended idea privately, then watch Player A try it without coaching. Both receive the same short label definitions and risk explanation. I would record stamp arrivals, opening or skipping, pauses around highlights, first judgments, Undo, Reset, and the next moves. Afterwards I would ask, “Why do you think the author marked that stop?” and compare the explanation with the author’s intention. These are planned observations. A later comparison with a similar unfamiliar board without the position-change consequence, with order reversed across pairs, could examine the role of risk; this first session alone cannot establish that risk caused avoidance.
+
+### Next decision
+
+If players avoid stamps, I would test a consequence-free first mismatch. If their explanations are sensible but labels disagree, I would revise the definitions before adding labels or accepting multiple answers. Frequent immediate Undo would prompt a review of the position-change cost; frequent Reset would prompt a review of one-guess-per-round feedback. I would keep the feature only if the discussion reveals more than label guessing.
+
+Local checks pass: 24 game tests, 83 repository tests, and browser checks at 320/390/1280 px. Tests cover exchange, preview locks, candidate selection, two-step Undo, Reset audit, returned-trace summaries, and all four escape routes. Known limits are label overlap, small samples, session-only statistics, and the tension between randomness and a deterministic puzzle. Stamp codes require this variation; original board text still loads. Remote CI is checked separately on the PR.
