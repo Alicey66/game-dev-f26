@@ -1,6 +1,6 @@
 # Get Out: Misdelivered Stamp
 
-**Zixuan Yang · UNI: zy2786 · GitHub owner: alicey66**
+**GitHub owner: alicey66**
 
 A puzzle author marks a useful stopping point with an intention. The recipient decides whether to open that stamp and match the author’s label. A mismatch changes the player’s position within a previewed set of previously visited stops. The exit remains the goal; collecting stamps is optional.
 

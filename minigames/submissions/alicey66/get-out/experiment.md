@@ -1,6 +1,6 @@
 # Misdelivered Stamp: design and verification
 
-**Zixuan Yang · UNI: zy2786**
+**alicey66**
 
 ## Design question and prediction
 
