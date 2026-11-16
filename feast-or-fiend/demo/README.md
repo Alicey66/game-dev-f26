@@ -8,7 +8,7 @@
 
 **Option B — source ZIP:** Install Python 3.10 or later (with Tkinter, included by the standard Windows installer), unzip the project and double-click `PLAY_ON_WINDOWS.bat`. No pip install required. Alternatively run `python game/main.py`.
 
-**To create your own EXE locally:** `pip install pyinstaller` then `pyinstaller --onefile --windowed --name FeastOrFiend --add-data "game/artpack.b64;." game/main.py` (Windows PowerShell at repository root). Find the program in `dist/FeastOrFiend.exe`.
+**To create your own EXE locally:** double-click `BUILD_WINDOWS_EXE.bat` (requires Python and internet to download PyInstaller). This creates `dist/FeastOrFiend.exe`, which runs on compatible Windows PCs without Python. Alternatively install PyInstaller manually and run `pyinstaller --onefile --windowed --name FeastOrFiend --add-data "game/artpack.b64;." game/main.py` from the demo root.
 
 ## Controls
 
