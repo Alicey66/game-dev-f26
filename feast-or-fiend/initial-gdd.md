@@ -62,3 +62,13 @@ The three HIGH risks share the cause of excessive integrated system complexity.
 [OPEN] Agent provider/model selection, after latency/cost test.
 [OPEN] G2 and G3 official milestone dates.
 Project lead makes final design/scope decisions; AI assistants only recommend and help implement.
+
+## 14. GATE-ALIGNED MILESTONES (PLANNED)
+
+- **G1 (Nov 15–16):** Pitch, Initial GDD/Configuration/Plan; request permission for a single playable experiment.
+- **Technical checkpoint (Nov 23, provisional):** Demonstrate one deployed model call, isolated encounter state, and forced-timeout scripted fallback.
+- **First playable recording (Nov 28, provisional):** Show ingredient acquisition, recipe unlock, restaurant progression feedback, and a Cake Boss encounter in both AI/scripted modes.
+- **Combined G2/G3 (Nov 30, provisional):** Record at least one external player observation, performance/cost traces, initial playtest log, updated design/configuration, risk register, and feasible production scope.
+- **Gold recording (Dec 5) / G4 (Dec 7) / G5 (Dec 14), provisional:** Release-candidate evidence, final documentation and evaluation, then retrospective and archived evidence.
+
+**Source caveat:** Dates after G1 are copied as provisional planning targets from a peer's G1 project plan. Verify the official calendar. This is intended behavior, not evidence of an implemented build.
