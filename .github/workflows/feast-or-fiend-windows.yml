@@ -1,0 +1,32 @@
+name: Build Windows Desktop Demo
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'feast-or-fiend/demo/**'
+      - '.github/workflows/feast-or-fiend-windows.yml'
+  workflow_dispatch:
+
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: feast-or-fiend/demo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PyInstaller
+        run: python -m pip install pyinstaller
+      - name: Check Python syntax
+        run: python -m py_compile game/main.py
+      - name: Build standalone Windows executable
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name FeastOrFiend --add-data "game/artpack.b64;." game/main.py
+      - name: Upload playable EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: FeastOrFiend-Windows
+          path: feast-or-fiend/demo/dist/FeastOrFiend.exe
+          if-no-files-found: error
