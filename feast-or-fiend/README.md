@@ -12,7 +12,7 @@
 - [Initial Configuration Document](./initial-configuration.md)
 - [Initial Project Plan](./initial-project-plan.md)
 - [Google Slides — Pixel-Art G1 Pitch](https://docs.google.com/presentation/d/1OS48z4kwEGjlqCn658eXSDcTTxVg-H9tUQWE9GSaxsk/edit)
-- [3–5 minute presentation recording](https://drive.google.com/file/d/1PT-qcANWjSeg7dOGmem_HbMKRNATTmjb/view)
+- [3–5 minute presentation recording](https://drive.google.com/file/d/1IdLTHalpZ8DhfI9jdMJyAoz8EqDl3XWU/view?usp=drive_link)
 - [3–5 minute speaker script](https://docs.google.com/document/d/12LsXW0z8h4L0RrN8TqeFzkPRXDXvU3Rs5I49jIRYU2M/edit)
 
 ## Core loop
