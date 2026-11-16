@@ -113,9 +113,11 @@ class Game:
  def click(self,event):
   x,y=event.x,event.y
   if self.modal:
-   if 240<x<725 and 350<y<530:
-    i=int((y-350)/42)
-    if 0<=i<len(self.modal_options):self.resolve_modal(i)
+   count=min(len(self.modal_options),4)
+   top=305 if count>=4 else 340 if count==3 else 380
+   if 200<x<760 and top<=y<top+count*37:
+    i=int((y-top)/37)
+    if 0<=i<count:self.resolve_modal(i)
    return
   if y>=531:
    if x<185:self.interact()
@@ -127,7 +129,7 @@ class Game:
  def set_scene(self,scene,x,y):
   self.scene=scene;self.x=x;self.y=y;self.keys.clear()
   if scene=='boss':
-   self.boss_hp=12 if not self.boss_changed else 16;self.boss_attack_at=time.monotonic()+2
+   self.boss_hp=12 if not self.boss_changed else 17;self.boss_attack_at=time.monotonic()+2
    self.boss_x=480.;self.boss_y=225.;self.boss_warning=None;self.boss_bullets=[]
    self.dialogue('BOSS ENCOUNTER  •  LADY CAKE',
     '"Oh? A chef. You want to feed me a strawberry? Darling, I could use a new look!"\n\nJ: attack  •  K: offer a strawberry  •  T: compare boss policies\nDodge her telegraphed attacks and survive!', ['Let them eat cake!'])
@@ -340,7 +342,7 @@ class Game:
   text+='\n\nCoins: '+str(self.coins)+'   •   F5 to save'
   self.dialogue('INVENTORY  •  YOUR BAG',text,['Close'])
  def pause_menu(self):
-  self.dialogue('PAUSED  •  TAKE A BREATH','THE LAST SPOON IS YOURS.\n\nWASD / Arrow keys   Move\nE   Talk / plant / cook / serve\nJ   Swing your spoon\nK   Offer strawberry to boss\nQ   Journal / quests\nTAB   Inventory\nT   Toggle adaptive vs scripted boss\nF5   Save\nM   Sound cues\nESC   Pause', ['Return to adventure','Save game','Quit game'],lambda i:self.pause_action(i))
+  self.dialogue('PAUSED  •  TAKE A BREATH','THE LAST SPOON IS YOURS.\n\nWASD / ARROWS    Move       E    Interact / Cook / Plant\nJ    Swing spoon       K    Offer strawberry to boss\nQ    Journal           TAB  Inventory\nT    Compare boss AI   F5   Save      ESC  Pause', ['Return to adventure','Save game','Quit game'],lambda i:self.pause_action(i))
  def pause_action(self,i):
   if i==1:self.save()
   elif i==2:self.save();self.root.destroy()
@@ -474,7 +476,7 @@ class Game:
   c.create_rectangle(169,119,792,163,fill='#416d72',outline='#7db69a',width=2,tags='modal')
   self.text(185,128,self.modal[1],17,'#fff0c8',tag='modal')
   option_count=min(len(self.modal_options),4)
-  option_top=332 if option_count>=4 else 357 if option_count==3 else 380
+  option_top=305 if option_count>=4 else 340 if option_count==3 else 380
   approx_lines=sum(max(1,math.ceil(len(line)/64)) for line in self.modal[2].split('\n'))
   body_size=11 if approx_lines>=9 else 12
   self.text(188,175,self.modal[2],body_size,'#ecf5dc',tag='modal',width=590)
@@ -482,8 +484,8 @@ class Game:
   for i,s in enumerate(self.modal_options[:4]):
    yy=option_top+i*37
    color='#527d70' if self.modal_selected==i else '#324c65'
-   c.create_rectangle(235,yy,724,yy+32,fill=color,outline='#a6c7a8',width=2,tags='modal')
-   self.text(257,yy+8,str(i+1)+'. '+s,12,CREAM,tag='modal')
+   c.create_rectangle(200,yy,760,yy+32,fill=color,outline='#a6c7a8',width=2,tags='modal')
+   self.text(218,yy+8,str(i+1)+'. '+s,11,CREAM,tag='modal')
   self.text(481,475,'ENTER to continue   •   1–4 choose   •   ESC close',10,'#a9c8c7',anchor='center',tag='modal')
 
  def run(self):
