@@ -34,3 +34,13 @@ Human project lead: approves design, merges code, authorizes dependencies/servic
 No unrestricted filesystem, deployment, billing, external messaging, or destructive permissions for assistants. Keep credentials out of prompts and repository. Explicit approval required for adding paid model endpoints.
 ## DEFINITION OF DONE FOR FIRST PROTOTYPE
 A player can collect an ingredient, unlock a recipe, see a restaurant reward, feed or fight the Cake Boss, switch between agent/scripted conditions, and produce inspectable encounter logs. No runtime crashes during a short test.
+
+## GATE CHECKPOINTS AND ACCEPTANCE EVIDENCE (PLANNED)
+
+**Nov 23 technical checkpoint (provisional):** One verifiable deployed model call, isolated encounter/session state, and a deliberately forced timeout returning a valid scripted fallback. Report the true provider/model and a measured trace; a fixture must not be represented as a live call.
+
+**Nov 28 first playable recording (provisional):** Demonstrate the same boss action catalog in scripted and agent modes, validator enforcement, and ingredient/recipe gameplay. Include setup/play/test instructions and an identified revision.
+
+**Nov 30 combined G2/G3 (provisional):** Update model identifier/settings and prompt paths, context and tool schemas, tests and CI paths, versioned failure logs, measured latency/cost, human playtest observations, and accountable owner/handoff records. Document planned versus implemented versus verified behaviors.
+
+**Post-G1 dates are unverified against the official syllabus** and are based on a peer project plan. Student remains accountable for approvals; instructors make gate decisions.
